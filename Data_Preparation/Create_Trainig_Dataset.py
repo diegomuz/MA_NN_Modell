@@ -48,4 +48,4 @@ print(f"{dxr_training}\n")
 
 dxr_training.to_netcdf(f"Data_Preparation/Training_Datasets/Trainingsdaten_{YEAR}.nc", format='NETCDF4', mode='w')
 
-print(f"\nEverything wored well. Trainingsdaten_{YEAR}.nc can now be found in the folder Training_Datasets\n\n ")
+print(f"\nEverything worked well. Trainingsdaten_{YEAR}.nc can now be found in the folder Training_Datasets\n\n ")
