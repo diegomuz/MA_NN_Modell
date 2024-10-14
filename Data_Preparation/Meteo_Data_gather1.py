@@ -179,21 +179,22 @@ def meteo_main(year,reserve):
     }
 
 
-    Clean_df = pd.DataFrame(Data)
+    Clean_meteo_df = pd.DataFrame(Data)
 
 
-    print(Clean_df)
+    print(Clean_meteo_df)
 
-    print(Clean_df.iloc[0][1:].values)
+    print(Clean_meteo_df.iloc[0][1:].values)
 
     # Daten in netcdf file speichern: 
 
-    Clean_dxr = xr.Dataset.from_dataframe(Clean_df)
+    Clean_dxr = xr.Dataset.from_dataframe(Clean_meteo_df)
 
     #print(Clean_dxr.dims)
     #print(Clean_dxr.variables)
 
     Clean_dxr.to_netcdf(f"Data_Preparation/clean_Meteo_Datasets/Gereinigte Meteo-Daten {year}.nc", format='NETCDF4', mode = 'w' )
+    
 
 
 

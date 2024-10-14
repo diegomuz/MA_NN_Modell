@@ -192,20 +192,21 @@ def air_main(year,reserve):
     }
 
 
-    Clean_df = pd.DataFrame(Data)
 
-    print(Clean_df)
+    Clean_air_df = pd.DataFrame.from_dict(Data)
 
-    print(Clean_df.iloc[0][1:].values)
+
+    print(Clean_air_df.iloc[1][1:].values)
+
 
                 
     # Daten in netcdf file speichern: 
 
-    Clean_dxr = xr.Dataset.from_dataframe(Clean_df)
+    Clean_dxr = xr.Dataset.from_dataframe(Clean_air_df)
 
     Clean_dxr.to_netcdf(f"Data_Preparation/clean_Air_Datasets/Gereinigte Luft-Daten {year}.nc", format= 'NETCDF4', mode = 'w' )
 
 
 
 
-                
+             
