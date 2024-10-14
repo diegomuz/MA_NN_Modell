@@ -33,20 +33,30 @@ def air_main(year,reserve):
 
     # neues file kreieren mit den richtigen Daten
 
-    # Es hat 24 Werte pro Stunde
-    Stampfenbachstrasse = []
+    # Determine order of gases in Datafile (Different for year < 2019 and for year > 2019)
 
-    idx = 0
-    for i in range(int(len(Luftwerte)/24)):
-        for d in range(8):
-            Stampfenbachstrasse.append(Luftwerte[idx]) # Nur werte von der Stampfenbachstrasse
+    Stampfenbach_gas_order = ['CO','SO2','NOx','NO','NO2','O3','PM10','PM2.5']
+    Stampfenbach_indexes = [0,0,0,0,0,0,0,0]
+    idx  = 0
+    for i in range(24):
+        if All_data['Standort'][i] == "Zch_Stampfenbachstrasse":
+            Stampfenbach_indexes[Stampfenbach_gas_order.index(All_data['Parameter'][i])] = idx
             idx += 1
 
-        idx += 16
+    Schimmel_Rosengarten_gas_order = ['NOx','NO','NO2','O3','PM10','PM2.5']
+    Schimmel_Rosengarten_indexes = [0,0,0,0,0,0]
+    idx = 0
+    #for i in range(24):
+
+    # Eventuell noch updaten für jahre vor 2019
 
 
+
+
+    Stampfenbachstrasse = [Luftwerte[i] for i in range(len(Luftwerte)) if All_data['Standort'][i] == "Zch_Stampfenbachstrasse" ]
 
     Schimmel_Rosengartenstrasse = []
+
 
     s = [Luftwerte[i] for i in range(len(Luftwerte)) if All_data['Standort'][i] == "Zch_Schimmelstrasse" or All_data['Standort'][i] == "Zch_Rosengartenstrasse"]
 
@@ -205,7 +215,6 @@ def air_main(year,reserve):
     Clean_dxr = xr.Dataset.from_dataframe(Clean_air_df)
 
     Clean_dxr.to_netcdf(f"Data_Preparation/clean_Air_Datasets/Gereinigte Luft-Daten {year}.nc", format= 'NETCDF4', mode = 'w' )
-
 
 
 
