@@ -195,7 +195,7 @@ correlation_matrix = data.corr(numeric_only=True, method='pearson')
 
 selected_rows = [30,33,34,35,36,37,38]
 
-selected_cols = [4,8,11,12,13,14,16,17,24,25,27,29,30,33,34,35,36,37,38,40,31,42,43,44,45,48,39,32,47]
+selected_cols = [4,8,11,12,13,14,16,17,24,25,27,28,29,30,33,34,35,36,37,38,40,31,42,43,44,45,46,48,39,32,47]
 
 correlation_matrix = correlation_matrix.iloc[selected_cols, selected_rows]
 

@@ -1,0 +1,1 @@
+# here I will try a with a tutorial to build and train the lstm. Goal: get to understand keras and tf well

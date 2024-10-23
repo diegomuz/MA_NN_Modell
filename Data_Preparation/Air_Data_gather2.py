@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import xarray as xr
-from sklearn.preprocessing import StandardScaler
+
 
 
 
@@ -35,6 +35,9 @@ def air_main(year,reserve):
 
     # Determine order of gases in Datafile (Different for year < 2019 and for year > 2019)
 
+    """""
+    # Im moment ignorieren
+
     Stampfenbach_gas_order = ['CO','SO2','NOx','NO','NO2','O3','PM10','PM2.5']
     Stampfenbach_indexes = [0,0,0,0,0,0,0,0]
     idx  = 0
@@ -46,10 +49,13 @@ def air_main(year,reserve):
     Schimmel_Rosengarten_gas_order = ['NOx','NO','NO2','O3','PM10','PM2.5']
     Schimmel_Rosengarten_indexes = [0,0,0,0,0,0]
     idx = 0
-    #for i in range(24):
+    for i in range(24):
+        if All_data ['Standort'][i] == "Zch_Schimmelstrasse":
+            Schimmel_Rosengarten_indexes[Schimmel_Rosengarten_gas_order.index(All_data['Parameter'][i])] = idx
+            idx += 1
 
-    # Eventuell noch updaten für jahre vor 2019
 
+    """
 
 
 
@@ -101,76 +107,9 @@ def air_main(year,reserve):
 
     print(f"Nan-vals in Schimmel_Rosengartenstrasse: {c}")
 
-    #print(f"{Schimmel_Rosengartenstrasse[7]} should be the average of {s[13]} and {s[19]}")
 
 
-    # Fehlende Daten ersetzen: 
-
-    # Zuerst für die Stampfenbachstrasse: 
-    """""
-
-    for i in range(len(Stampfenbachstrasse)):
-        if np.isnan(Stampfenbachstrasse[i]):
-            a = None
-            b = None
-
-            for l in range(reserve):
-                
-                if a != None and b != None:
-                    break
-
-                if not np.isnan(Stampfenbachstrasse[i + (l+1)*8]) and b == None:
-                    b = Stampfenbachstrasse[i + (l+1)*8]
-                
-                if not np.isnan(Stampfenbachstrasse[i - (l+1)*8]) and a == None:
-                    a = Stampfenbachstrasse[i - (l+1)*8]
-        
-            Stampfenbachstrasse[i] = (a+b)/2
-
-    # Dann für die Schimmel_Rosengartenstrasse:
-
-    """
-
-    for i in range(len(Schimmel_Rosengartenstrasse)):
-        if np.isnan(Schimmel_Rosengartenstrasse[i]):
-            a = None
-            b = None
-
-            for l in range(reserve): 
-                
-                if a != None and b != None:
-                    break
-
-                if not np.isnan(Schimmel_Rosengartenstrasse[i + (l+1)*6]) and b == None:
-                    b = Schimmel_Rosengartenstrasse[i + (l+1)*6]
-
-                if not np.isnan(Schimmel_Rosengartenstrasse[i - (l+1)*6]) and a == None:
-                    a = Schimmel_Rosengartenstrasse[i - (l+1)*6]
-            
-            Schimmel_Rosengartenstrasse[i] = (a+b)/2
-
-            ti = i
-            tl = l
-
-    # Nach NaN-Werten überprüfen:
-
-    # Stampfenbachstrasse:
-
-    c = 0 
-    for i in range(len(Stampfenbachstrasse)):
-        if np.isnan(Stampfenbachstrasse[i]):
-            c += 1
-    print(f"Nan values in Stampfenbachstrasse after clean-up: {c}")
-
-    # Schimmel_Rosengartenstrasse:
-
-    c = 0
-    for i in range(len(Schimmel_Rosengartenstrasse)):
-        if np.isnan(Schimmel_Rosengartenstrasse[i]):
-            c =+ 1
-    print(f"Nan values in Schimmel_Rosengartenstrasse after clean-up: {c}")
-
-
+    
     # Daten zusammenfügen zu neuem Dataframe
 
 
@@ -202,12 +141,73 @@ def air_main(year,reserve):
     }
 
 
+    
+
 
     Clean_air_df = pd.DataFrame.from_dict(Data)
 
+    print('\n Processing...')
 
-    print(Clean_air_df.iloc[1][1:].values)
+    # identify outliers and replace them: 
+    
+    min_occurence = 6
 
+    
+    for cols in Clean_air_df.columns[1:]:
+        df = Clean_air_df[cols]
+        q1 = df.quantile(0.25)
+        q3 = df.quantile(0.75)
+        IQR = q3-q1
+        upper_fence = q3 + 1.7*IQR
+        lower_fence = q3 -1.7*IQR
+        df = list(df)
+
+        for i in range (len(df)):
+        
+            if not np.isnan(df[i]):
+
+                if i < reserve + 1 or i > len(df) -reserve -1: 
+
+                     if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                        if df[i] <= lower_fence:
+                             df[i] = lower_fence
+                        elif df[i] > upper_fence:
+                            df[i] = upper_fence
+
+                        
+
+                else: 
+                    if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                        a = None
+                        b = None
+
+                        for l in range(reserve):
+
+                            if a != None and b != None:
+                                break
+
+                            if  not np.isnan(df[i + (l+1)]):
+                                if lower_fence <= df[i + (l+1)] <= upper_fence:
+                                    b = df[i + (l+1)]
+
+                            if  not np.isnan(df[i - (l+1)]):
+                                if lower_fence <= df[i - (l+1)] <= upper_fence:
+                                    a = df[i - (l+1)]
+                        if a == None or b == None:
+                            if df[i] <= lower_fence:
+                                df[i] = lower_fence
+
+                            elif df[i] > upper_fence:
+                                df[i] = upper_fence
+
+                        else:
+                            df[i] = (a+b)/2
+                
+        Clean_air_df[cols] = df
+                            
+
+
+            
 
                 
     # Daten in netcdf file speichern: 
@@ -220,4 +220,3 @@ def air_main(year,reserve):
 
 
 
-             

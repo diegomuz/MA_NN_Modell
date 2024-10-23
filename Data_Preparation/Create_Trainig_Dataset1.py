@@ -1,27 +1,19 @@
 import pandas as pd
 import numpy as np
 import xarray as xr
-import subprocess as sb
 from Air_Data_gather1 import air_main
 from Meteo_Data_gather1 import meteo_main
 
 YEAR = 2021
 
-# Air_Dataset vorbereiten:
 
-air_main(YEAR,100)
-
-# Meteo_Dataset vorbereiten:
-
-meteo_main(YEAR,150)
 
 # Datensätze öffnen:
 
-d_air = xr.open_dataset(f"Data_Preparation/clean_Air_Datasets/Gereinigte Luft-Daten {YEAR}.nc")
-d_air  = d_air.to_dataframe()
+d_air = air_main(YEAR,100)
 
-d_meteo = xr.open_dataset(f"Data_Preparation/clean_Meteo_Datasets/Gereinigte Meteo-Daten {YEAR}.nc")
-d_meteo = d_meteo.to_dataframe()
+d_meteo = meteo_main(YEAR,150)
+
 d_meteo.drop('Datum', axis = 1, inplace=True)
 
 

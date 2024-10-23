@@ -81,73 +81,8 @@ def meteo_main(year,reserve):
     print(f"Nan-vals in Schimmel_Rosengartenstrasse: {c}")
 
 
-    # Fehlende Daten ersetzen: 
 
-    # Zuerst für die Stampfenbachstrasse: 
-    """""
 
-    for i in range(len(Stampfenbachstrasse)):
-        if np.isnan(Stampfenbachstrasse[i]):
-            a = None
-            b = None
-
-            for l in range(reserve):
-                
-                if a != None and b != None:
-                    break
-
-                if not np.isnan(Stampfenbachstrasse[i + (l+1)*8]) and b == None:
-                    b = Stampfenbachstrasse[i + (l+1)*8]
-                
-                if not np.isnan(Stampfenbachstrasse[i - (l+1)*8]) and a == None:
-                    a = Stampfenbachstrasse[i - (l+1)*8]
-        
-            Stampfenbachstrasse[i] = (a+b)/2
-
-    """
-
-    # Dann für die Schimmel_Rosengartenstrasse:
-
-   
-
-    for i in range(len(Schimmel_Rosengartenstrasse)):
-        if np.isnan(Schimmel_Rosengartenstrasse[i]):
-            a = None
-            b = None
-
-            for l in range(reserve): 
-                
-                if a != None and b != None:
-                    break
-
-                if not np.isnan(Schimmel_Rosengartenstrasse[i + (l+1)*7]) and b == None:
-                    b = Schimmel_Rosengartenstrasse[i + (l+1)*7]
-
-                if not np.isnan(Schimmel_Rosengartenstrasse[i - (l+1)*7]) and a == None:
-                    a = Schimmel_Rosengartenstrasse[i - (l+1)*7]
-            
-            Schimmel_Rosengartenstrasse[i] = (a+b)/2
-
-            ti = i
-            tl = l
-
-    # Nach NaN-Werten überprüfen:
-
-    # Stampfenbachstrasse:
-
-    c = 0 
-    for i in range(len(Stampfenbachstrasse)):
-        if np.isnan(Stampfenbachstrasse[i]):
-            c += 1
-    print(f"Nan values in Stampfenbachstrasse after clean-up: {c}")
-
-    # Schimmel_Rosengartenstrasse:
-
-    c = 0
-    for i in range(len(Schimmel_Rosengartenstrasse)):
-        if np.isnan(Schimmel_Rosengartenstrasse[i]):
-            c =+ 1
-    print(f"Nan values in Schimmel_Rosengartenstrasse after clean-up: {c}")
 
     # Daten zusammenfügen zu neuem Dataframe
 
@@ -185,7 +120,68 @@ def meteo_main(year,reserve):
 
     print(Clean_meteo_df)
 
-    print(Clean_meteo_df.iloc[0][1:].values)
+    print('\n Processing...')
+
+
+    # identify outliers and replace them: 
+    
+    min_occurence = 6
+
+    
+    for cols in Clean_meteo_df.columns[1:]:
+        df = Clean_meteo_df[cols]
+        q1 = df.quantile(0.25)
+        q3 = df.quantile(0.75)
+        IQR = q3-q1
+        upper_fence = q3 + 1.7*IQR
+        lower_fence = q3 -1.7*IQR
+        df = list(df)
+
+        for i in range (len(df)):
+        
+            if not np.isnan(df[i]):
+
+                if i < reserve + 1 or i > len(df) -reserve -1: 
+
+                     if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                        if df[i] <= lower_fence:
+                             df[i] = lower_fence
+                        elif df[i] > upper_fence:
+                            df[i] = upper_fence
+
+                        
+
+                else: 
+                    if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                        a = None
+                        b = None
+
+                        for l in range(reserve):
+
+                            if a != None and b != None:
+                                break
+
+                            if  not np.isnan(df[i + (l+1)]):
+                                if lower_fence <= df[i + (l+1)] <= upper_fence:
+                                    b = df[i + (l+1)]
+
+                            if  not np.isnan(df[i - (l+1)]):
+                                if lower_fence <= df[i - (l+1)] <= upper_fence:
+                                    a = df[i - (l+1)]
+                        if a == None or b == None:
+                            if df[i] <= lower_fence:
+                                df[i] = lower_fence
+
+                            elif df[i] > upper_fence:
+                                df[i] = upper_fence
+
+                        else:
+                            df[i] = (a+b)/2
+                
+        Clean_meteo_df[cols] = df
+                            
+
+
 
     # Daten in netcdf file speichern: 
 
