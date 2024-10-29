@@ -129,57 +129,60 @@ def meteo_main(year,reserve):
 
     
     for cols in Clean_meteo_df.columns[1:]:
-        df = Clean_meteo_df[cols]
-        q1 = df.quantile(0.25)
-        q3 = df.quantile(0.75)
-        IQR = q3-q1
-        upper_fence = q3 + 1.7*IQR
-        lower_fence = q3 -1.7*IQR
-        df = list(df)
+        if cols != 'RainDur' and cols != 'Cont_RainDur':
 
-        for i in range (len(df)):
-        
-            if not np.isnan(df[i]):
 
-                if i < reserve + 1 or i > len(df) -reserve -1: 
+            df = Clean_meteo_df[cols]
+            q1 = df.quantile(0.25)
+            q3 = df.quantile(0.75)
+            IQR = q3-q1
+            upper_fence = q3 + 1.7*IQR
+            lower_fence = q3 -1.7*IQR
+            df = list(df)
 
-                     if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
-                        if df[i] <= lower_fence:
-                             df[i] = lower_fence
-                        elif df[i] > upper_fence:
-                            df[i] = upper_fence
+            for i in range (len(df)):
+            
+                if not np.isnan(df[i]):
 
-                        
+                    if i < reserve + 1 or i > len(df) -reserve -1: 
 
-                else: 
-                    if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
-                        a = None
-                        b = None
-
-                        for l in range(reserve):
-
-                            if a != None and b != None:
-                                break
-
-                            if  not np.isnan(df[i + (l+1)]):
-                                if lower_fence <= df[i + (l+1)] <= upper_fence:
-                                    b = df[i + (l+1)]
-
-                            if  not np.isnan(df[i - (l+1)]):
-                                if lower_fence <= df[i - (l+1)] <= upper_fence:
-                                    a = df[i - (l+1)]
-                        if a == None or b == None:
+                        if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
                             if df[i] <= lower_fence:
                                 df[i] = lower_fence
-
                             elif df[i] > upper_fence:
                                 df[i] = upper_fence
 
-                        else:
-                            df[i] = (a+b)/2
-                
-        Clean_meteo_df[cols] = df
                             
+
+                    else: 
+                        if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                            a = None
+                            b = None
+
+                            for l in range(reserve):
+
+                                if a != None and b != None:
+                                    break
+
+                                if  not np.isnan(df[i + (l+1)]):
+                                    if lower_fence <= df[i + (l+1)] <= upper_fence:
+                                        b = df[i + (l+1)]
+
+                                if  not np.isnan(df[i - (l+1)]):
+                                    if lower_fence <= df[i - (l+1)] <= upper_fence:
+                                        a = df[i - (l+1)]
+                            if a == None or b == None:
+                                if df[i] <= lower_fence:
+                                    df[i] = lower_fence
+
+                                elif df[i] > upper_fence:
+                                    df[i] = upper_fence
+
+                            else:
+                                df[i] = (a+b)/2
+                    
+            Clean_meteo_df[cols] = df
+                                
 
 
 
