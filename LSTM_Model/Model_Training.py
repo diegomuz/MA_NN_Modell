@@ -5,8 +5,16 @@ import xarray as xr
 
 
 import tensorflow as tf
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import LSTMV1, Dense
+
+
+from tf_keras.models import Sequential
+from tf_keras.layers import  Dense
+from tf_keras.layers import LSTM
+
+from tf_keras.callbacks import TensorBoard
+import datetime
+
+
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -93,26 +101,52 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
 
 
-a,b,c,d = create_training_data(training_df, 0.8, 'O3', 24, 5)
 
-print(a.shape)
-print(b.shape)
-print(c.shape)
-print(d.shape)
+# create Trraining and Test Datasets
 
+look_back = 24
 
+X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, 'O3', look_back, 1)
 
+print(X_train.shape)
 
-
-    
-
-
-
-
-
-# Build the model
+# Build the model:
 
 model = Sequential()
+model.add(LSTM(20, input_shape = (look_back, 29)))
+model.add(Dense(1))
+
+model.compile(loss = 'mean_squared_error', optimizer='adam')
+
+print(model.summary())
+
+
+# Prepare Training visualization:
+
+    # Tensorboard set up: Code from: https://www.tensorflow.org/tensorboard/get_started
+
+log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+
+# fit the model, inspired by this study:
+
+model.fit(X_train, 
+          Y_train, 
+          epochs=10,
+          batch_size = 32, 
+          validation_data=(X_test, Y_test), 
+          callbacks=[tensorboard_callback])
+
+
+
+
+
+
+
+
+
+
 
 
 
