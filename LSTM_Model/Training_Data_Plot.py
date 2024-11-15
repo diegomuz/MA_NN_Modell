@@ -1,3 +1,12 @@
+'''
+Quellen/Tutorials:
+
+https://engineeringfordatascience.com/posts/matplotlib_subplots/
+
+'''
+
+
+
 import pandas as pd
 import numpy as np
 import xarray as xr
@@ -20,6 +29,8 @@ df = xr.open_dataset(f"Data_Preparation/Training_Datasets/Trainingsdaten_{YEAR}.
 df = df.to_dataframe()
 
 print(df)
+
+print('\n')
 
 feature_keys = ['CO', 'SO2', 'NO2','O3', 'PM10', 'PM2.5']
 feature_units = ['(mg/m3)','(µg/m3)','(µg/m3)','(µg/m3)','(µg/m3)','(µg/m3)']
@@ -56,8 +67,8 @@ def histogram_boxplot(data, key, unit):
    
     fig.show()
     
-visualize_traing_data(df)
-#histogram_boxplot(df, 'CO', 'mg/m3')
+#visualize_traing_data(df)
+#histogram_boxplot(df, 'NO2', 'mg/m3')
 
 
 

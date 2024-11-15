@@ -38,6 +38,8 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
+features = ['Datum','O3']
+
 # remove features that won't be used:
 
 for feature in training_df.columns:
@@ -105,15 +107,18 @@ def run():
 
     # create Trraining and Test Datasets
 
-    look_back = 24
-    y_range = 1
+    model_type = 2
 
-    LSTM_l1_dimension = 29
+    look_back = 24
+    y_range = 5
+
+    LSTM_l1_dimension = 50
+    LSTM_l2_dimension = 25
 
     batchsize = 32
-    epochs = 20
+    epochs = 40
 
-    to_predict_feature = 'PM10'
+    to_predict_feature = 'O3'
 
     X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
 
@@ -122,7 +127,14 @@ def run():
     # Build the model:
 
     model = Sequential()
-    model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, 29)))
+    if model_type == 1:
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1), return_sequences=False))
+    else:
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1), return_sequences=True))
+
+    if model_type == 2:
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
+        
     model.add(Dense(y_range))
 
     model.compile(loss = 'mean_squared_error', optimizer='adam')
@@ -155,8 +167,13 @@ def run():
 
     # save the model
 
-    model.save(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_epochs-{epochs}).keras')
+    if model_type == 1:
+    
 
+        model.save(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+
+    if model_type == 2:
+        model.save(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 
 
 run()

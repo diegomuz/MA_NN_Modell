@@ -1,3 +1,14 @@
+"""
+Benutzte Quellen/Tutorials: 
+
+https://www.geeksforgeeks.org/how-to-create-a-seaborn-correlation-heatmap-in-python/
+https://blog.quantinsti.com/creating-heatmap-using-python-seaborn/
+
+"""
+
+
+
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -189,6 +200,10 @@ data = pd.DataFrame(fin_data)
 
 #print(s)
 
+print("\n")
+
+print(data.iloc[:,4:])
+
 # creating the heatmap
 
 correlation_matrix = data.corr(numeric_only=True, method='pearson')
@@ -201,9 +216,13 @@ correlation_matrix = correlation_matrix.iloc[selected_cols, selected_rows]
 
 #print(correlation_matrix)
 
-plt.figure(figsize=(20, 20))
+plt.figure(figsize=(15, 15))
 
-heatmap = sns.heatmap(correlation_matrix, vmin = -1, vmax = 1, annot = True, fmt=".2f")
+
+heatmap = sns.heatmap(correlation_matrix, vmin = -1, vmax = 1, annot = True, fmt=".2f", xticklabels = data.columns[selected_rows])
+
+plt.xticks(rotation = 20, fontsize = 8)
+plt.yticks(fontsize = 8)
 
 #heatmap.set_title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12)
 
