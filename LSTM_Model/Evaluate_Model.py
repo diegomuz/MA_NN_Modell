@@ -22,7 +22,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-# features = ['Datum', 'O3']
+#features = ['Datum', 'PM10']
 
 def prepare_data():
     #prepare data
@@ -44,7 +44,7 @@ def prepare_data():
             training_df.drop(feature, axis = 1, inplace=True)
 
 
-    print(training_df['O3'][28075:])
+#    print(training_df['O3'][28075:])
     return(training_df)
 
 scaler = MinMaxScaler()
@@ -58,7 +58,7 @@ def split_scale_data(df,split_percentage):
     test_data = scaled_df.iloc[split_point:].reset_index(drop=True)
 
     
-    print(test_data['O3'][24:])
+#    print(test_data['O3'][24:])
 
     return train_data, test_data
 
@@ -90,11 +90,13 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     return X_tr, Y_tr, X_te, Y_te
 
-model_type = 1
+model_type = 2
 
 look_back = 24
 y_range = 1
-LSTM_l1_dimension = 29
+LSTM_l1_dimension = 15
+
+LSTM_l2_dimension = 15
 
 batchsize = 32
 epochs = 20
@@ -113,7 +115,7 @@ if model_type == 1:
 
     model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 else:
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 
 
 model.summary()
@@ -153,16 +155,16 @@ def inverse_scale(array):
 
 
 
-predict_range = 100
+predict_range = 48
 
 actual_vals = []
 
 # change the following code, so that it makes sense for y_range > 1
 
-Model_prediction = Y_test[:predict_range]
 
-for i in range(int(len(Model_prediction)/y_range)):
-    for item in Model_prediction[i*y_range]:
+
+for i in range(int(len(Y_test[:predict_range])/y_range)):
+    for item in Y_test[:predict_range][i*y_range]:
         actual_vals.append(item)
 
 """"
@@ -190,8 +192,10 @@ print(actual_vals)
 
 predicted_vals = []
 
-for i in range(int(len(model.predict(X_test[:predict_range]))/y_range)):
-    for item in model.predict(X_test[:predict_range])[i*y_range]:
+Model_prediction = model.predict(X_test[:predict_range])
+
+for i in range(int(len(Model_prediction)/y_range)):
+    for item in Model_prediction[i*y_range]:
         predicted_vals.append(item)
 
 """"
@@ -217,6 +221,17 @@ plt.plot(predicted_vals, label = 'Prediction', color = 'blue' )
 plt.title('Predicted vs Actual Values')
 
 plt.legend(loc="upper left")
+
+
+if model_type == 1:
+
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+if model_type == 2:
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+
+
+
+
 
 plt.show()
 
