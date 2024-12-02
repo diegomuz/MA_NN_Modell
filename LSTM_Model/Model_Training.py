@@ -12,6 +12,9 @@ from tf_keras.layers import  Dense
 from tf_keras.layers import LSTM
 
 from tf_keras.callbacks import TensorBoard
+from tf_keras.callbacks import EarlyStopping
+from tf_keras.callbacks import ModelCheckpoint
+
 import datetime
 
 import json
@@ -39,7 +42,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-#features = ['Datum','PM10']
+features = ['Datum','PM10']
 
 # remove features that won't be used:
 
@@ -72,6 +75,7 @@ def split_scale_data(df,split_percentage):
 # y_range: how many future hours we predict
 # x_timesteps, how many hours back it looks at once to predict the next values
 
+
 def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_range):
     train_data , test_data = split_scale_data(df,split_percentage)
 
@@ -80,6 +84,8 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     # number of features is number of cols in train_data
     X_tr, Y_tr = [],[]
+
+
 
     for i in range(len(train_data)- timesteps - y_range + 1):
         X_tr.append(train_data.iloc[i: i+timesteps])
@@ -108,16 +114,16 @@ def run():
 
     # create Trraining and Test Datasets
 
-    model_type = 2
+    model_type = 1
 
     look_back = 24
     y_range = 1
 
-    LSTM_l1_dimension = 15
+    LSTM_l1_dimension = 29
     LSTM_l2_dimension = 15
 
     batchsize = 32
-    epochs = 20
+    epochs = 30
 
     to_predict_feature = 'PM10'
 
@@ -130,10 +136,9 @@ def run():
     model = Sequential()
     if model_type == 1:
         model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1), return_sequences=False))
-    else:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1), return_sequences=True))
 
     if model_type == 2:
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1), return_sequences=True))
         model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
         
     model.add(Dense(y_range))
@@ -153,6 +158,21 @@ def run():
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
 
 
+    # add callbacks and early stopping:
+
+    if model_type == 1:
+
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras', 
+                             monitor='val_loss', mode = 'min', verbose = 1,  save_best_only=True)
+
+    if model_type == 2:
+
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras',
+                             monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
+
+    es = EarlyStopping(monitor = 'val_loss', mode = 'min', verbose = 1)
+
+
 
 
     # fit the model, inspired by this study:
@@ -162,7 +182,7 @@ def run():
             epochs=epochs,
             batch_size = batchsize, 
             validation_data=(X_test, Y_test), 
-            callbacks=[tensorboard_callback])
+            callbacks=[tensorboard_callback,es,mc])
 
 
 
@@ -173,18 +193,18 @@ def run():
         with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).json', 'w') as f:
             json.dump(history.history, f)
 
-        model.save(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+        #model.save(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 
     if model_type == 2:
 
         with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).json', 'w') as f:
             json.dump(history.history, f)
 
-        model.save(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+        #model.save(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 
+    print('Model was trained')
 
 run()
-
 
 
 

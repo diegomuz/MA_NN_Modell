@@ -1,4 +1,4 @@
-import tensorflow as tf
+#import tensorflow as tf
 import tf_keras
 
 import numpy as np
@@ -22,7 +22,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-#features = ['Datum', 'PM10']
+features = ['Datum', 'PM10']
 
 def prepare_data():
     #prepare data
@@ -90,18 +90,20 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     return X_tr, Y_tr, X_te, Y_te
 
-model_type = 2
+model_type = 1
 
 look_back = 24
 y_range = 1
-LSTM_l1_dimension = 15
+LSTM_l1_dimension = 29
 
 LSTM_l2_dimension = 15
 
 batchsize = 32
-epochs = 20
+epochs = 30
 
 to_predict_feature = 'PM10'
+
+predict_range = 120
 
 training_df = prepare_data()
 
@@ -155,7 +157,7 @@ def inverse_scale(array):
 
 
 
-predict_range = 48
+
 
 actual_vals = []
 
@@ -164,7 +166,7 @@ actual_vals = []
 
 
 for i in range(int(len(Y_test[:predict_range])/y_range)):
-    for item in Y_test[:predict_range][i*y_range]:
+    for item in Y_test[:predict_range][(i)*y_range]:
         actual_vals.append(item)
 
 """"
@@ -192,10 +194,10 @@ print(actual_vals)
 
 predicted_vals = []
 
-Model_prediction = model.predict(X_test[:predict_range])
+Model_prediction = model.predict(X_test[:predict_range+y_range])
 
-for i in range(int(len(Model_prediction)/y_range)):
-    for item in Model_prediction[i*y_range]:
+for i in range(int(len(Model_prediction)/y_range)-y_range):
+    for item in Model_prediction[(i+1)*y_range]:
         predicted_vals.append(item)
 
 """"
