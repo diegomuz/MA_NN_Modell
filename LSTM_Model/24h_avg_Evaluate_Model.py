@@ -123,9 +123,9 @@ X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predic
 
 if model_type == 1:
 
-    model = tf_keras.models.load_model(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 else:
-    model = tf_keras.models.load_model(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 
 
 model.summary()
@@ -235,9 +235,9 @@ plt.legend(loc="upper left")
 
 if model_type == 1:
 
-    plt.savefig(f'Graphics/24h_avg-{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/24h_avg-{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 if model_type == 2:
-    plt.savefig(f'Graphics/24h_avg-{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/24h_avg-{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 
 
 

@@ -24,11 +24,11 @@ to_predict_feature = 'PM10'
 if model_type == 1:
 
 
-    with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).json', 'r') as f:
+    with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'r') as f:
         loaded_history = json.load(f)
 
 if model_type == 2:
-    with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).json', 'r') as f:
+    with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'r') as f:
         loaded_history = json.load(f)
 
 
@@ -41,9 +41,9 @@ plt.legend()
 
 if model_type == 1:
 
-    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 if model_type == 2:
-    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 
 
 

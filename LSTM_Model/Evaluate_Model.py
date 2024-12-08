@@ -22,7 +22,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-features = ['Datum', 'PM10']
+features = ['Datum', 'O3']
 
 def prepare_data():
     #prepare data
@@ -94,16 +94,16 @@ model_type = 1
 
 look_back = 24
 y_range = 1
-LSTM_l1_dimension = 29
+LSTM_l1_dimension = 30
 
 LSTM_l2_dimension = 15
 
 batchsize = 32
 epochs = 30
 
-to_predict_feature = 'PM10'
+to_predict_feature = 'O3'
 
-predict_range = 120
+predict_range = 72
 
 training_df = prepare_data()
 
@@ -115,9 +115,9 @@ X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predic
 
 if model_type == 1:
 
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 else:
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 
 
 model.summary()
@@ -147,7 +147,7 @@ def inverse_scale(array):
 
     df = pd.DataFrame(scaler.inverse_transform(df),columns=df.columns)
 
-    print(df)
+    #print(df)
 
     actual_values = np.array(df[to_predict_feature])
 
@@ -156,6 +156,10 @@ def inverse_scale(array):
     return(actual_values)
 
 
+def calculate_rmse_accuracy(y_actual, y_predicted):
+    rmse = np.sqrt(np.mean((y_actual-y_predicted)**2))
+    return rmse
+
 
 
 
@@ -163,10 +167,12 @@ actual_vals = []
 
 # change the following code, so that it makes sense for y_range > 1
 
+delta = 100
 
+shift = int((3 - look_back/12)*12) + delta
 
-for i in range(int(len(Y_test[:predict_range])/y_range)):
-    for item in Y_test[:predict_range][(i)*y_range]:
+for i in range(int(predict_range/y_range)):
+    for item in Y_test[:predict_range + shift][(i*y_range)+int(shift/y_range)]:
         actual_vals.append(item)
 
 """"
@@ -194,10 +200,10 @@ print(actual_vals)
 
 predicted_vals = []
 
-Model_prediction = model.predict(X_test[:predict_range+y_range])
+Model_prediction = model.predict(X_test[:predict_range+y_range+shift])
 
-for i in range(int(len(Model_prediction)/y_range)-y_range):
-    for item in Model_prediction[(i+1)*y_range]:
+for i in range(int(predict_range/y_range)):
+    for item in Model_prediction[(i+1)*y_range + int(shift/y_range)]:
         predicted_vals.append(item)
 
 """"
@@ -209,7 +215,7 @@ predicted_vals = np.array(predicted_vals)
 
 predicted_vals = inverse_scale(predicted_vals)
 
-#print(predicted_vals)
+print(predicted_vals)
 
 
 
@@ -220,6 +226,16 @@ plt.plot(actual_vals, label = 'Actual Value', color = 'green')
 
 plt.plot(predicted_vals, label = 'Prediction', color = 'blue' )
 
+rmse = calculate_rmse_accuracy(actual_vals,predicted_vals)
+
+# Add RMSE as a note to the top right of the plot
+plt.text(0.95, 0.95, f"RMSE = {rmse:.2f}", 
+         transform=plt.gca().transAxes, 
+         fontsize=10, 
+         verticalalignment='top', 
+         horizontalalignment='right',
+         bbox=dict(boxstyle="round", facecolor="white", edgecolor="gray"))
+
 plt.title('Predicted vs Actual Values')
 
 plt.legend(loc="upper left")
@@ -227,9 +243,9 @@ plt.legend(loc="upper left")
 
 if model_type == 1:
 
-    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 if model_type == 2:
-    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 
 
 

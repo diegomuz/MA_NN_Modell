@@ -147,8 +147,13 @@ look_back = 24
 y_range = 1
 
 
+def calculate_rmse_accuracy(y_actual, y_predicted):
+    rmse = np.sqrt(np.mean((y_actual-y_predicted)**2))
+    return rmse
 
-to_predict_feature = 'PM10'
+
+
+to_predict_feature = 'O3'
 
 X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
 
@@ -157,15 +162,22 @@ model.load_model(f'XGboost_Regression/Models/{to_predict_feature}-XGBOOST_range-
 
 
 
-predict_range = 48
+predict_range = 72
 
 actual_vals = []
 
+delta = 100
 
+shift = int((3 - look_back/12)*12) + delta
 
-for i in range(int(len(Y_test[:predict_range])/y_range)):
-    for item in Y_test[:predict_range][(i)*y_range]:
+for i in range(int(predict_range/y_range)):
+    for item in Y_test[:predict_range + shift][(i*y_range)+int(shift/y_range)]:
         actual_vals.append(item)
+
+
+
+
+
 
 actual_vals = np.array(actual_vals)
 
@@ -173,10 +185,12 @@ actual_vals = inverse_scale(actual_vals)
 
 predicted_vals = []
 
-Model_prediction = model.predict(X_test[:predict_range+y_range])
 
-for i in range(int(len(Model_prediction)/y_range)-y_range):
-    for item in [Model_prediction[(i+1)*y_range]]:
+
+Model_prediction = model.predict(X_test[:predict_range+y_range+shift])
+
+for i in range(int(predict_range/y_range)):
+    for item in [Model_prediction[(i+1)*y_range + int(shift/y_range)]]:
         predicted_vals.append(item)
 
 predicted_vals = np.array(predicted_vals)
@@ -187,6 +201,16 @@ plt.plot(actual_vals, label = 'Actual Value', color = 'green')
 
 
 plt.plot(predicted_vals, label = 'Prediction', color = 'blue' )
+
+rmse = calculate_rmse_accuracy(actual_vals,predicted_vals)
+
+# Add RMSE as a note to the top right of the plot
+plt.text(0.95, 0.95, f"RMSE = {rmse:.2f}", 
+         transform=plt.gca().transAxes, 
+         fontsize=10, 
+         verticalalignment='top', 
+         horizontalalignment='right',
+         bbox=dict(boxstyle="round", facecolor="white", edgecolor="gray"))
 
 plt.title('Predicted vs Actual Values')
 

@@ -123,7 +123,7 @@ def run():
 
 
 
-    to_predict_feature = 'PM10'
+    to_predict_feature = 'O3'
 
     X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
 

@@ -42,7 +42,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-features = ['Datum','PM10']
+features = ['Datum','O3']
 
 # remove features that won't be used:
 
@@ -119,13 +119,13 @@ def run():
     look_back = 24
     y_range = 1
 
-    LSTM_l1_dimension = 29
+    LSTM_l1_dimension = 30
     LSTM_l2_dimension = 15
 
     batchsize = 32
     epochs = 30
 
-    to_predict_feature = 'PM10'
+    to_predict_feature = 'O3'
 
     X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
 
@@ -162,15 +162,15 @@ def run():
 
     if model_type == 1:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras', 
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras', 
                              monitor='val_loss', mode = 'min', verbose = 1,  save_best_only=True)
 
     if model_type == 2:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras',
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras',
                              monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
 
-    es = EarlyStopping(monitor = 'val_loss', mode = 'min', verbose = 1)
+    es = EarlyStopping(monitor = 'val_loss', patience = 4,mode = 'min', verbose = 1)
 
 
 
@@ -182,7 +182,7 @@ def run():
             epochs=epochs,
             batch_size = batchsize, 
             validation_data=(X_test, Y_test), 
-            callbacks=[tensorboard_callback,es,mc])
+            callbacks=[tensorboard_callback, es, mc])
 
 
 
@@ -190,14 +190,14 @@ def run():
 
     if model_type == 1:
         
-        with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).json', 'w') as f:
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
             json.dump(history.history, f)
 
         #model.save(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 
     if model_type == 2:
 
-        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).json', 'w') as f:
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
             json.dump(history.history, f)
 
         #model.save(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
