@@ -9,6 +9,8 @@ import xarray as xr
 from statistics import mean
 
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
 
 
 
@@ -17,12 +19,21 @@ year_list = [2020,2021,2022,2023]
 
 # define what Features should be used for the model training
 
+
+
 features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3', 'Cont_PM10', 'Cont_PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
+"""
+
+features = ['Datum','O3','T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
+        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
+
+"""
 
 features = ['Datum', 'O3']
+
 
 def prepare_data():
     #prepare data
@@ -90,20 +101,20 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     return X_tr, Y_tr, X_te, Y_te
 
-model_type = 1
+model_type = 2
 
-look_back = 24
+look_back = 1
 y_range = 1
-LSTM_l1_dimension = 30
+LSTM_l1_dimension = 20
 
-LSTM_l2_dimension = 15
+LSTM_l2_dimension = 10
 
 batchsize = 32
 epochs = 30
 
 to_predict_feature = 'O3'
 
-predict_range = 72
+predict_range = 100
 
 training_df = prepare_data()
 
@@ -156,9 +167,6 @@ def inverse_scale(array):
     return(actual_values)
 
 
-def calculate_rmse_accuracy(y_actual, y_predicted):
-    rmse = np.sqrt(np.mean((y_actual-y_predicted)**2))
-    return rmse
 
 
 
@@ -221,22 +229,37 @@ print(predicted_vals)
 
 
 
-plt.plot(actual_vals, label = 'Actual Value', color = 'green')
 
 
-plt.plot(predicted_vals, label = 'Prediction', color = 'blue' )
 
-rmse = calculate_rmse_accuracy(actual_vals,predicted_vals)
+plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
+
+
+plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
+
+
+rmse = np.sqrt(mean_squared_error(actual_vals,predicted_vals))
+mae = mean_absolute_error(actual_vals,predicted_vals)
+
+metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}"
 
 # Add RMSE as a note to the top right of the plot
-plt.text(0.95, 0.95, f"RMSE = {rmse:.2f}", 
+plt.text(0.95, 0.95, metrics_text, 
          transform=plt.gca().transAxes, 
-         fontsize=10, 
+         fontsize=8, 
          verticalalignment='top', 
          horizontalalignment='right',
          bbox=dict(boxstyle="round", facecolor="white", edgecolor="gray"))
 
-plt.title('Predicted vs Actual Values')
+
+
+
+plt.yticks(range(10,100,10))
+plt.title(f'{to_predict_feature} - Echte Werte vs Vorhersagen')
+
+plt.ylabel('Konzentration in µg/m3')
+plt.xlabel('Stunden')
+
 
 plt.legend(loc="upper left")
 

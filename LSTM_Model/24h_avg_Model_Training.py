@@ -12,6 +12,8 @@ from tf_keras.layers import  Dense
 from tf_keras.layers import LSTM
 
 from tf_keras.callbacks import TensorBoard
+from tf_keras.callbacks import EarlyStopping
+from tf_keras.callbacks import ModelCheckpoint
 import datetime
 
 import json
@@ -126,13 +128,13 @@ def run():
     look_back = 24
     y_range = 1
 
-    LSTM_l1_dimension = 15
-    LSTM_l2_dimension = 15
+    LSTM_l1_dimension = 40
+    LSTM_l2_dimension = 20
 
     batchsize = 32
-    epochs = 20
+    epochs = 30
 
-    to_predict_feature = 'PM10'
+    to_predict_feature = 'O3'
 
     X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
 
@@ -166,6 +168,22 @@ def run():
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
 
 
+    
+    # add callbacks and early stopping:
+
+    if model_type == 1:
+
+        mc = ModelCheckpoint(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras', 
+                             monitor='val_loss', mode = 'min', verbose = 1,  save_best_only=True)
+
+    if model_type == 2:
+
+        mc = ModelCheckpoint(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras',
+                             monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
+
+    es = EarlyStopping(monitor = 'val_loss', patience = 4,mode = 'min', verbose = 1)
+
+
 
 
     # fit the model, inspired by this study:
@@ -175,7 +193,7 @@ def run():
             epochs=epochs,
             batch_size = batchsize, 
             validation_data=(X_test, Y_test), 
-            callbacks=[tensorboard_callback])
+            callbacks=[tensorboard_callback, es, mc])
 
 
 
@@ -186,14 +204,14 @@ def run():
         with open(f'LSTM_Model/24h_avg_Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
             json.dump(history.history, f)
 
-        model.save(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+        #model.save(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 
     if model_type == 2:
 
         with open(f'LSTM_Model/24h_avg_Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
             json.dump(history.history, f)
 
-        model.save(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+        #model.save(f'LSTM_Model/24h_avg_Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 
 
 run()

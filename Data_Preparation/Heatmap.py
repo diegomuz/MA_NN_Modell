@@ -208,9 +208,15 @@ print(data.iloc[:,4:])
 
 correlation_matrix = data.corr(numeric_only=True, method='pearson')
 
-selected_rows = [30,33,34,35,36,37,38]
 
-selected_cols = [4,8,11,12,13,14,16,17,24,25,27,28,29,30,33,34,35,36,37,38,40,31,42,43,44,45,46,48,39,32,47]
+
+#selected_rows = [30,33,34,35,36,37,38]
+
+#selected_cols = [4,8,11,12,13,14,16,17,24,25,27,28,29,30,33,34,35,36,37,38,40,31,42,43,44,45,46,48,39,32,47]
+
+selected_rows = [36]
+selected_cols = [30,34,6,19, 18, 35,7,20,41, 37, 9, 22, 38, 10, 23, 40, 43, 31,42, 44, 45, 48,  47, 32, 39]
+
 
 correlation_matrix = correlation_matrix.iloc[selected_cols, selected_rows]
 

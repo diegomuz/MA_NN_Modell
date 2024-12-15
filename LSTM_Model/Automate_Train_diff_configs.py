@@ -68,6 +68,19 @@ model_configs = [{'Type':1,'to_predict_feature':to_predict_feature, 'LSTM_l1_dim
                  
                 ]
 
+model_configs = [
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':10,'LSTM_l2_dimension':10, 'look_back':1, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':10,'LSTM_l2_dimension':20, 'look_back':1, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':20,'LSTM_l2_dimension':10, 'look_back':1, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':20,'LSTM_l2_dimension':20, 'look_back':1, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':10,'LSTM_l2_dimension':10, 'look_back':12, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':10,'LSTM_l2_dimension':20, 'look_back':12, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':20,'LSTM_l2_dimension':10, 'look_back':12, 'features': ['Datum',to_predict_feature], 'batchsize':32},
+    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':20,'LSTM_l2_dimension':20, 'look_back':12, 'features': ['Datum',to_predict_feature], 'batchsize':32}
+
+]
+
 
 
 year_list = [2020,2021,2022,2023]

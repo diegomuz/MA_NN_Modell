@@ -22,7 +22,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-features = ['Datum', 'PM10']
+#features = ['Datum', 'PM10']
 
 def prepare_data():
     #prepare data
@@ -100,18 +100,18 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     return X_tr, Y_tr, X_te, Y_te
 
-model_type = 1
+model_type = 2
 
 look_back = 24
 y_range = 1
-LSTM_l1_dimension = 29
+LSTM_l1_dimension = 40
 
-LSTM_l2_dimension = 15
+LSTM_l2_dimension = 20
 
 batchsize = 32
-epochs = 20
+epochs = 30
 
-to_predict_feature = 'PM10'
+to_predict_feature = 'O3'
 
 training_df = prepare_data()
 
@@ -205,7 +205,7 @@ predicted_vals = []
 Model_prediction = model.predict(X_test[:predict_range+y_range])
 
 for i in range(int(len(Model_prediction)/y_range)-y_range):
-    for item in Model_prediction[(i+1)*y_range]:
+    for item in Model_prediction[(i+0)*y_range]:
         predicted_vals.append(item)
 
 """"
@@ -232,14 +232,14 @@ plt.title('Predicted vs Actual Values')
 
 plt.legend(loc="upper left")
 
-
+"""""
 if model_type == 1:
 
     plt.savefig(f'Graphics/24h_avg-{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 if model_type == 2:
     plt.savefig(f'Graphics/24h_avg-{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
 
-
+"""
 
 
 

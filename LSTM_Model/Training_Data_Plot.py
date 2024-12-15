@@ -67,7 +67,7 @@ def histogram_boxplot(data, key, unit):
    
     fig.show()
     
-#visualize_traing_data(df)
+visualize_traing_data(df)
 #histogram_boxplot(df, 'NO2', 'mg/m3')
 
 
