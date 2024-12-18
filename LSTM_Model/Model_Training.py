@@ -45,7 +45,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-#features = ['Datum','PM10']
+features = ['Datum','O3']
 
 """""
 
@@ -161,7 +161,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
     return X_tr, Y_tr, X_te, Y_te
 
 
-y_forward = 1
+y_forward = 24
 
 
 def run():
@@ -174,9 +174,9 @@ def run():
     look_back = 24
     y_range = 1
 
-    LSTM_l1_dimension = 128
-    LSTM_l2_dimension = 128
-    LSTM_l3_dimension = 128
+    LSTM_l1_dimension = 64
+    LSTM_l2_dimension = 64
+    LSTM_l3_dimension = 64
 
     batchsize = 32
     epochs = 50

@@ -34,7 +34,7 @@ features = ['Datum','O3','T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs'
 
 """
 
-#features = ['Datum', 'PM10']
+#features = ['Datum', 'O3']
 
 
 def prepare_data():
@@ -148,11 +148,11 @@ model_type = 3
 
 look_back = 24
 y_range = 1
-y_forward = 12
+y_forward = 24
 
-LSTM_l1_dimension = 128
-LSTM_l2_dimension = 128
-LSTM_l3_dimension = 128
+LSTM_l1_dimension = 64
+LSTM_l2_dimension = 64
+LSTM_l3_dimension = 64
 
 batchsize = 32
 epochs = 30
@@ -329,18 +329,18 @@ print(predicted_vals)
 
 
 
-#plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
+plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
 
-plt.plot(actual_vals,  color = 'red')
+#plt.plot(actual_vals,  color = 'red')
 
-#plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
+plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
 
-x_vals = [x[0][0] for x in X_test]
-x_vals = inverse_scale(np.array(x_vals[y_range+int(shift/y_range):y_range+int(shift/y_range) + predict_range]))
+#x_vals = [x[0][0] for x in X_test]
+#x_vals = inverse_scale(np.array(x_vals[y_range+int(shift/y_range):y_range+int(shift/y_range) + predict_range]))
 
 #plt.plot(x_vals, label = 'x_vals', color = 'red')
 
-""""
+
 
 
 rmse = np.sqrt(mean_squared_error(actual_vals,predicted_vals))
@@ -369,7 +369,7 @@ plt.xlabel('Stunden')
 
 plt.legend(loc="upper left")
 
-"""
+
 plt.title(f'{to_predict_feature} - Konzentration')
 
 plt.ylabel('Konzentration in µg/m3')
