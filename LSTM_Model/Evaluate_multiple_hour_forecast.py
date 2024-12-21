@@ -36,6 +36,8 @@ features = ['Datum','O3','T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs'
 
 #features = ['Datum', 'O3']
 
+num_of_feautures = 0
+
 
 def prepare_data():
     #prepare data
@@ -82,6 +84,7 @@ def prepare_data():
 
     # add embeddings to training_df:
 
+    
     training_df['sin_h'] = sin_h
     training_df['cos_h'] = cos_h
     training_df['sin_d'] = sin_d
@@ -89,6 +92,7 @@ def prepare_data():
     training_df['sin_m'] = sin_m
     training_df['cos_m'] = cos_m
 
+    
     print(training_df)
 
 
@@ -109,6 +113,9 @@ def split_scale_data(df,split_percentage):
 
     
 #    print(test_data['O3'][24:])
+    
+    global num_of_feautures
+    num_of_feautures = len(train_data.columns)
 
     return train_data, test_data
 
@@ -138,8 +145,9 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
     X_te = np.array(X_te)
     Y_te = np.array(Y_te)
 
-    print(X_te[:10])
-    print(Y_te[:10])
+    print('Xtest and Ytest')
+    print(X_te[0])
+    print(Y_te[0])
 
     return X_tr, Y_tr, X_te, Y_te
 
@@ -148,7 +156,7 @@ model_type = 3
 
 look_back = 24
 y_range = 1
-y_forward = 24
+y_forward = 1
 
 LSTM_l1_dimension = 64
 LSTM_l2_dimension = 64
@@ -171,11 +179,11 @@ X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predic
 
 if model_type == 1:
 
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 if model_type == 2:
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 if model_type == 3:
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 
 
 model.summary()
@@ -222,7 +230,7 @@ actual_vals = []
 
 # change the following code, so that it makes sense for y_range > 1
 
-delta = 400
+delta = 2000
 
 shift = int((3 - look_back/12)*12) + delta
 
@@ -320,6 +328,8 @@ predicted_vals = np.array(predicted_vals)
 
 predicted_vals = inverse_scale(predicted_vals)
 
+
+print(actual_vals)
 print(predicted_vals)
 
 
@@ -345,7 +355,7 @@ plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
 
 rmse = np.sqrt(mean_squared_error(actual_vals,predicted_vals))
 mae = mean_absolute_error(actual_vals,predicted_vals)
-r2 = r2_score(actual_vals, predicted_vals)
+r2 = r2_score(actual_vals,predicted_vals)
 
 metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nR2 = {r2:.2f}"
 
@@ -377,18 +387,18 @@ plt.xlabel('Stunden')
 
 
 
-""""
+
 if model_type == 1:
 
-    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 if model_type == 2:
-    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
 if model_type == 3:
-    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
     
-"""
+
 
 
 

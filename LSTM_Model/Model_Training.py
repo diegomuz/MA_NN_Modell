@@ -10,6 +10,7 @@ import tensorflow as tf
 from tf_keras.models import Sequential
 from tf_keras.layers import  Dense
 from tf_keras.layers import LSTM
+from tf_keras.layers import Dropout
 
 from tf_keras.callbacks import TensorBoard
 from tf_keras.callbacks import EarlyStopping
@@ -45,7 +46,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-features = ['Datum','O3']
+#features = ['Datum','O3']
 
 """""
 
@@ -53,6 +54,8 @@ features = ['Datum','O3','T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs'
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
 """
+
+num_of_feautures = 0
 
 # remove features that won't be used:
 
@@ -90,12 +93,15 @@ cos_m = [np.cos(2*np.pi*m/12) for m in month_of_year]
 
 # add embeddings to training_df:
 
+
+
 training_df['sin_h'] = sin_h
 training_df['cos_h'] = cos_h
 training_df['sin_d'] = sin_d
 training_df['cos_d'] = cos_d
 training_df['sin_m'] = sin_m
 training_df['cos_m'] = cos_m
+
 
 print(training_df)
 
@@ -112,7 +118,8 @@ def split_scale_data(df,split_percentage):
     test_data = scaled_df.iloc[split_point:].reset_index(drop=True)
 
     
-
+    global num_of_feautures
+    num_of_feautures = len(train_data.columns)
 
     return train_data, test_data
 
@@ -136,7 +143,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     for i in range(len(train_data)- timesteps - y_range + 1 -y_forward):
         X_tr.append(train_data.iloc[i: i+timesteps])
-        Y_tr.append(train_data[to_predict_feature][i+timesteps +y_forward : i+timesteps+y_range + y_forward])
+        Y_tr.append(train_data[to_predict_feature][i+timesteps +y_forward -1 : i+timesteps+y_range + y_forward -1])
 
 
 
@@ -150,7 +157,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     for i in range(len(test_data) - timesteps - y_range +1 -y_forward):
         X_te.append(test_data.iloc[i: i+timesteps])
-        Y_te.append(test_data[to_predict_feature][i+timesteps + y_forward : i+timesteps+y_range + y_forward])
+        Y_te.append(test_data[to_predict_feature][i+timesteps + y_forward -1 : i+timesteps+y_range + y_forward -1])
 
     X_te = np.array(X_te)
     Y_te = np.array(Y_te)
@@ -174,9 +181,9 @@ def run():
     look_back = 24
     y_range = 1
 
-    LSTM_l1_dimension = 64
-    LSTM_l2_dimension = 64
-    LSTM_l3_dimension = 64
+    LSTM_l1_dimension = 32
+    LSTM_l2_dimension = 32
+    LSTM_l3_dimension = 32
 
     batchsize = 32
     epochs = 50
@@ -191,16 +198,19 @@ def run():
 
     model = Sequential()
     if model_type == 1:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1+6), return_sequences=False) )
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False) )
 
     if model_type == 2:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1+6), return_sequences=True))
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
         model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
 
     if model_type == 3:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, len(features)-1+6), return_sequences=True))
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
+        #model.add(Dropout(0.2))
         model.add(LSTM(LSTM_l2_dimension, return_sequences=True))
+        #model.add(Dropout(0.2))
         model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
+        #model.add(Dropout(0.2))
         
     model.add(Dense(y_range))
 
@@ -223,17 +233,17 @@ def run():
 
     if model_type == 1:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras', 
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras', 
                              monitor='val_loss', mode = 'min', verbose = 1,  save_best_only=True)
 
     if model_type == 2:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras',
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras',
                              monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
         
     if model_type == 3:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras',
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras',
                              monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
 
     es = EarlyStopping(monitor = 'val_loss', patience = 4,mode = 'min', verbose = 1)
@@ -255,14 +265,14 @@ def run():
 
     if model_type == 1:
         
-        with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'w') as f:
             json.dump(history.history, f)
 
         #model.save(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
 
     if model_type == 2:
 
-        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'w') as f:
             json.dump(history.history, f)
 
         #model.save(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_epochs-{epochs}_features-{len(features)-1}).keras')
@@ -270,7 +280,7 @@ def run():
 
     if model_type == 3:
 
-        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).json', 'w') as f:
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'w') as f:
             json.dump(history.history, f)
 
 
