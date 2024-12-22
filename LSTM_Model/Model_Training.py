@@ -178,7 +178,7 @@ def run():
     model_type = 3
 
 
-    look_back = 24
+    look_back = 12
     y_range = 1
 
     LSTM_l1_dimension = 32
@@ -248,7 +248,7 @@ def run():
 
     es = EarlyStopping(monitor = 'val_loss', patience = 4,mode = 'min', verbose = 1)
 
-
+    
 
 
     # fit the model, inspired by this study:

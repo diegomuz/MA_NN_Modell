@@ -145,22 +145,21 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
     X_te = np.array(X_te)
     Y_te = np.array(Y_te)
 
-    print('Xtest and Ytest')
-    print(X_te[0])
-    print(Y_te[0])
+    #print('Xtest and Ytest')
+    #print(X_te[0])
+    #print(Y_te[0])
 
     return X_tr, Y_tr, X_te, Y_te
 
 model_type = 3
 
 
-look_back = 24
+look_back = 12
 y_range = 1
-y_forward = 1
-
-LSTM_l1_dimension = 64
-LSTM_l2_dimension = 64
-LSTM_l3_dimension = 64
+y_forward = 12
+LSTM_l1_dimension = 32
+LSTM_l2_dimension = 32
+LSTM_l3_dimension = 32
 
 batchsize = 32
 epochs = 30
@@ -230,7 +229,7 @@ actual_vals = []
 
 # change the following code, so that it makes sense for y_range > 1
 
-delta = 2000
+delta = 830
 
 shift = int((3 - look_back/12)*12) + delta
 
@@ -250,13 +249,13 @@ actual_vals = np.array(actual_vals)
 
 #actual_vals = scaler.inverse_transform(actual_vals)
 
-print(actual_vals)
+#print(actual_vals)
 
 actual_vals = inverse_scale(actual_vals)
 
 #print(actual_vals)
 
-print(actual_vals)
+#print(actual_vals)
 
 
 
@@ -264,9 +263,9 @@ print(actual_vals)
 predicted_vals = []
 
 Model_prediction = model.predict(X_test[:predict_range+y_range+shift])
-print(Model_prediction[y_range + int(shift/y_range): y_range + int(shift/y_range) + 10])
+#print(Model_prediction[y_range + int(shift/y_range): y_range + int(shift/y_range) + 10])
 
-print(X_test[y_range + int(shift/y_range):y_range + int(shift/y_range)+ 10])
+#print(X_test[y_range + int(shift/y_range):y_range + int(shift/y_range)+ 10])
 
 
 """"
@@ -307,7 +306,7 @@ for i in range(int(predict_range/y_range)):
     for item in Model_prediction[(i+0)*y_range + int(shift/y_range)]:
         predicted_vals.append(item)
 
-
+""""
 print('Model Prediction vs X_vals')
 print('Prediction:')
 print(model.predict(X_test[:14]))
@@ -317,7 +316,7 @@ for s in X_test[:14]:
 
 print('Y_test')
 print(Y_test[:14])
-
+"""
 
 """"
 for sub_list in model.predict(X_test[:predict_range]):
@@ -356,10 +355,13 @@ plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
 rmse = np.sqrt(mean_squared_error(actual_vals,predicted_vals))
 mae = mean_absolute_error(actual_vals,predicted_vals)
 r2 = r2_score(actual_vals,predicted_vals)
+correlation = np.corrcoef(actual_vals,predicted_vals)[0,1]
 
-metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nR2 = {r2:.2f}"
+metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
 
 # Add RMSE as a note to the top right of the plot
+
+
 plt.text(0.95, 0.95, metrics_text, 
          transform=plt.gca().transAxes, 
          fontsize=8, 
@@ -394,10 +396,11 @@ if model_type == 1:
 if model_type == 2:
     plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
+
 if model_type == 3:
     plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
-    
+
 
 
 
