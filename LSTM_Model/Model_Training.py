@@ -175,15 +175,16 @@ def run():
 
     # create Trraining and Test Datasets
 
-    model_type = 3
+    model_type = 1
 
 
-    look_back = 12
+    look_back = 6
     y_range = 1
 
     LSTM_l1_dimension = 32
     LSTM_l2_dimension = 32
     LSTM_l3_dimension = 32
+    LSTM_l4_dimension = 32
 
     batchsize = 32
     epochs = 50
@@ -198,20 +199,33 @@ def run():
 
     model = Sequential()
     if model_type == 1:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False) )
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False) )    
+        
 
     if model_type == 2:
         model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
         model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
+        
 
     if model_type == 3:
         model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
-        #model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l2_dimension, return_sequences=True))
-        #model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
-        #model.add(Dropout(0.2))
-        
+        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=True, recurrent_dropout=0.3))
+        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=False, recurrent_dropout=0.3))
+        model.add(Dropout(0.2))
+     
+    if model_type == 4:
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True, recurrent_dropout=0.3))
+        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=True, recurrent_dropout=0.3))
+        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l3_dimension, return_sequences=True,    recurrent_dropout=0.3))
+        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l4_dimension, return_sequences=False, recurrent_dropout=0.3))
+        model.add(Dropout(0.2))
+
+
     model.add(Dense(y_range))
 
     model.compile(loss = 'MSE', optimizer='adam')
@@ -243,7 +257,12 @@ def run():
         
     if model_type == 3:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras',
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}_withDropout).keras',
+                             monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
+        
+    if model_type == 4:
+        
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras',
                              monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
 
     es = EarlyStopping(monitor = 'val_loss', patience = 4,mode = 'min', verbose = 1)
@@ -280,7 +299,12 @@ def run():
 
     if model_type == 3:
 
-        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'w') as f:
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}_withDropout).json', 'w') as f:
+            json.dump(history.history, f)
+
+    if model_type == 4:
+        
+        with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'w') as f:
             json.dump(history.history, f)
 
 

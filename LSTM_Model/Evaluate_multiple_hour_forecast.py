@@ -151,22 +151,24 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     return X_tr, Y_tr, X_te, Y_te
 
-model_type = 3
+model_type = 1
 
 
-look_back = 12
+look_back = 6
 y_range = 1
-y_forward = 12
+y_forward = 24
 LSTM_l1_dimension = 32
 LSTM_l2_dimension = 32
 LSTM_l3_dimension = 32
+LSTM_l4_dimension = 32
 
 batchsize = 32
 epochs = 30
 
 to_predict_feature = 'O3'
 
-predict_range = 168
+predict_range = 6500
+delta = 0
 
 training_df = prepare_data()
 
@@ -183,7 +185,8 @@ if model_type == 2:
     model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 if model_type == 3:
     model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
-
+if model_type == 4:
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 
 model.summary()
 
@@ -229,7 +232,7 @@ actual_vals = []
 
 # change the following code, so that it makes sense for y_range > 1
 
-delta = 830
+
 
 shift = int((3 - look_back/12)*12) + delta
 
@@ -359,6 +362,8 @@ correlation = np.corrcoef(actual_vals,predicted_vals)[0,1]
 
 metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
 
+print(metrics_text)
+
 # Add RMSE as a note to the top right of the plot
 
 
@@ -400,7 +405,8 @@ if model_type == 2:
 if model_type == 3:
     plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
-
+if model_type == 4:
+    plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
 
 

@@ -5,6 +5,8 @@ import xarray as xr
 
 
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
 
 
 from xgboost import XGBRegressor
@@ -35,7 +37,49 @@ for feature in training_df.columns:
     if feature not in features:
         training_df.drop(feature, axis = 1, inplace=True)
 
+
+
+num_of_feautures = 0
+
+
+# encode month&day in the year and hour of the day:
+
+Datum = pd.to_datetime(training_df['Datum'], format='%Y-%m-%dT%H:%M%z')
+
+day_of_year = Datum.dt.day_of_year
+hour_of_day = Datum.dt.hour
+month_of_year = Datum.dt.month
+
+# hour encoding:
+
+sin_h = [np.sin(2*np.pi*h/24) for h in hour_of_day]
+cos_h = [np.cos(2*np.pi*h/24) for h in hour_of_day]
+
+#day encoding 
+
+sin_d = [np.sin(2*np.pi*d/24) for d in day_of_year]
+cos_d = [np.cos(2*np.pi*d/24) for d in day_of_year]
+
+# month encoding:
+
+
+sin_m = [np.sin(2*np.pi*m/12) for m in month_of_year]
+cos_m = [np.cos(2*np.pi*m/12) for m in month_of_year]
+
+# add embeddings to training_df:
+
+
+training_df['sin_h'] = sin_h
+training_df['cos_h'] = cos_h
+training_df['sin_d'] = sin_d
+training_df['cos_d'] = cos_d
+training_df['sin_m'] = sin_m
+training_df['cos_m'] = cos_m
+
+
 print(training_df)
+
+
 
 scaler = MinMaxScaler()
 
@@ -47,7 +91,8 @@ def split_scale_data(df,split_percentage):
     train_data = scaled_df.iloc[:split_point]
     test_data = scaled_df.iloc[split_point:].reset_index(drop=True)
 
-    
+    global num_of_feautures
+    num_of_feautures = len(train_data.columns)
 
 
     return train_data, test_data
@@ -65,7 +110,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
 
 
-    for i in range(len(train_data)- timesteps - y_range + 1):
+    for i in range(len(train_data)- timesteps - y_range + 1 -y_forward):
         s = []
         for d in range(timesteps):
             lis = train_data.iloc[i+d]
@@ -77,7 +122,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
         s = []
         for d in range(y_range):
-            lis = train_data[to_predict_feature][i+timesteps+d+y_range-1]
+            lis = train_data[to_predict_feature][i+timesteps+d-1 + y_forward]
 
             s.append(lis)
         
@@ -89,7 +134,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
     X_te, Y_te = [],[]
 
-    for i in range(len(test_data) - timesteps - y_range +1):
+    for i in range(len(test_data) - timesteps - y_range +1 -y_forward):
         s = []
         for d in range(timesteps):
             lis = test_data.iloc[i+d]
@@ -101,7 +146,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
         s = []
         for d in range(y_range):
-            lis = test_data[to_predict_feature][i+timesteps+d+y_range-1]
+            lis = test_data[to_predict_feature][i+timesteps+d-1 + y_forward]
             s.append(lis)
 
       
@@ -143,13 +188,12 @@ def inverse_scale(array):
 
 
 
-look_back = 24
+look_back = 36
 y_range = 1
+y_forward = 24
 
 
-def calculate_rmse_accuracy(y_actual, y_predicted):
-    rmse = np.sqrt(np.mean((y_actual-y_predicted)**2))
-    return rmse
+
 
 
 
@@ -158,15 +202,15 @@ to_predict_feature = 'O3'
 X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
 
 model = XGBRegressor()
-model.load_model(f'XGboost_Regression/Models/{to_predict_feature}-XGBOOST_range-{y_range}_lookback-{look_back}_features-{len(features)-1}.json')
+model.load_model(f'XGboost_Regression/Models/{to_predict_feature}-XGBOOST_range-{y_range}_forward-{y_forward}_lookback-{look_back}_features-{num_of_feautures}.json')
 
 
 
-predict_range = 72
+predict_range = 168
 
 actual_vals = []
 
-delta = 100
+delta = 000
 
 shift = int((3 - look_back/12)*12) + delta
 
@@ -190,33 +234,45 @@ predicted_vals = []
 Model_prediction = model.predict(X_test[:predict_range+y_range+shift])
 
 for i in range(int(predict_range/y_range)):
-    for item in [Model_prediction[(i+1)*y_range + int(shift/y_range)]]:
+    for item in [Model_prediction[(i+0)*y_range + int(shift/y_range)]]:
         predicted_vals.append(item)
 
 predicted_vals = np.array(predicted_vals)
 
 predicted_vals = inverse_scale(predicted_vals)
 
-plt.plot(actual_vals, label = 'Actual Value', color = 'green')
+plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
 
 
-plt.plot(predicted_vals, label = 'Prediction', color = 'blue' )
+plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
 
-rmse = calculate_rmse_accuracy(actual_vals,predicted_vals)
+rmse = np.sqrt(mean_squared_error(actual_vals,predicted_vals))
+mae = mean_absolute_error(actual_vals,predicted_vals)
+
+correlation = np.corrcoef(actual_vals,predicted_vals)[0,1]
+
+metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
+
+print(metrics_text)
 
 # Add RMSE as a note to the top right of the plot
-plt.text(0.95, 0.95, f"RMSE = {rmse:.2f}", 
+
+plt.text(0.95, 0.95, metrics_text, 
          transform=plt.gca().transAxes, 
-         fontsize=10, 
+         fontsize=8, 
          verticalalignment='top', 
          horizontalalignment='right',
          bbox=dict(boxstyle="round", facecolor="white", edgecolor="gray"))
 
-plt.title('Predicted vs Actual Values')
+plt.title(f'{to_predict_feature} - Konzentration (XGBoost)')
+
+plt.ylabel('Konzentration in µg/m3')
+plt.xlabel('Stunden')
+
 
 plt.legend(loc="upper left")
 
-plt.savefig(f'Graphics/{to_predict_feature}-XGBOOST_Prediction_Fig_range-{y_range}_lookback-{look_back}_features-{len(features)-1}.pdf')  
+plt.savefig(f'Graphics/{to_predict_feature}-XGBOOST_Prediction_Fig_range-{y_range}_forward-{y_forward}_lookback-{look_back}_features-{num_of_feautures}.pdf')  
 
 
 plt.show()
