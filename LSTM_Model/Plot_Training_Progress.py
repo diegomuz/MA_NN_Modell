@@ -9,12 +9,12 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
 #features = ['Datum','O3']
 
 num_of_feautures = 35
-model_type = 3
+model_type = 1
 
-look_back = 12
+look_back = 36
 y_range = 1
 y_forward = 1
-LSTM_l1_dimension = 64
+LSTM_l1_dimension = 32
 
 LSTM_l2_dimension = 64
 
@@ -28,7 +28,7 @@ to_predict_feature = 'O3'
 if model_type == 1:
 
 
-    with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'r') as f:
+    with open(f'LSTM_Model/Histories/{to_predict_feature}-History(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'r') as f:
         loaded_history = json.load(f)
 
 if model_type == 2:
@@ -39,21 +39,24 @@ if model_type == 3:
     with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'r') as f:
         loaded_history = json.load(f)
 
-
-plt.plot(loaded_history['loss'], label='Training Loss')
-plt.plot(loaded_history['val_loss'], label='Validation Loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
+plt.figure(figsize=(8,6))
+plt.plot(loaded_history['loss'], label='Training MSE')
+plt.plot(loaded_history['val_loss'], label='Test MSE')
+plt.xticks(range(0,len(loaded_history['loss']),2))
+plt.title(f'MSE-Entwicklung des {to_predict_feature}-Modells')
+plt.xlabel('Anzahl Epochen')
+plt.ylabel('MSE')
 plt.yscale('linear')
 plt.legend()
 
 if model_type == 1:
 
-    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 if model_type == 2:
-    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).pdf')
+    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
-
+if model_type == 3:
+    plt.savefig(f'Graphics/{to_predict_feature}-Trainprogress_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
 
 plt.show()

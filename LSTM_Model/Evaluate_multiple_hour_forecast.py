@@ -83,7 +83,7 @@ def prepare_data():
     cos_m = [np.cos(2*np.pi*m/12) for m in month_of_year]
 
     # add embeddings to training_df:
-
+    
     
     training_df['sin_h'] = sin_h
     training_df['cos_h'] = cos_h
@@ -91,7 +91,7 @@ def prepare_data():
     training_df['cos_d'] = cos_d
     training_df['sin_m'] = sin_m
     training_df['cos_m'] = cos_m
-
+    
     
     print(training_df)
 
@@ -154,21 +154,21 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 model_type = 1
 
 
-look_back = 6
+look_back = 24
 y_range = 1
-y_forward = 24
+y_forward = 12
 LSTM_l1_dimension = 32
 LSTM_l2_dimension = 32
 LSTM_l3_dimension = 32
-LSTM_l4_dimension = 32
+LSTM_l4_dimension = 64
 
 batchsize = 32
 epochs = 30
 
 to_predict_feature = 'O3'
 
-predict_range = 6500
-delta = 0
+predict_range = 168
+delta = 2100
 
 training_df = prepare_data()
 
@@ -367,6 +367,7 @@ print(metrics_text)
 # Add RMSE as a note to the top right of the plot
 
 
+
 plt.text(0.95, 0.95, metrics_text, 
          transform=plt.gca().transAxes, 
          fontsize=8, 
@@ -378,10 +379,7 @@ plt.text(0.95, 0.95, metrics_text,
 
 
 #plt.yticks(range(10,100,10))
-plt.title(f'{to_predict_feature} - Echte Werte vs Vorhersagen')
 
-plt.ylabel('Konzentration in µg/m3')
-plt.xlabel('Stunden')
 
 
 plt.legend(loc="upper left")
@@ -410,6 +408,6 @@ if model_type == 4:
 
 
 
-
 plt.show()
+
 

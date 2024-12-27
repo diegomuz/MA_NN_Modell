@@ -188,9 +188,9 @@ def inverse_scale(array):
 
 
 
-look_back = 36
+look_back = 24
 y_range = 1
-y_forward = 24
+y_forward = 12
 
 
 
@@ -206,11 +206,11 @@ model.load_model(f'XGboost_Regression/Models/{to_predict_feature}-XGBOOST_range-
 
 
 
-predict_range = 168
+predict_range = 6500
 
 actual_vals = []
 
-delta = 000
+delta = 0
 
 shift = int((3 - look_back/12)*12) + delta
 
