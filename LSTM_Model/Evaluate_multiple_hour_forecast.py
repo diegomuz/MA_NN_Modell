@@ -28,12 +28,14 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
 """"
+features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
+       'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3',
+       'T', 'Hr',  'StrGlo',  'WVv', 'WVs', 'Cont_T',
+       'Cont_Hr', 'Cont_WVv', 'Cont_WVs']
 
-features = ['Datum','O3','T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
-        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
-
+#features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
+ #      'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
 """
-
 #features = ['Datum', 'O3']
 
 num_of_feautures = 0
@@ -44,12 +46,15 @@ def prepare_data():
 
     training_df = pd.DataFrame()
 
+   
+
     for year in year_list: 
         df = xr.open_dataset(f"Data_Preparation/Training_Datasets/Trainingsdaten_{year}.nc")
         df = df.to_dataframe()
         training_df = pd.concat([training_df, df], axis=0, ignore_index=True)
 
-
+    print('Datum am Ende:')
+    print(training_df['Datum'][int(0.8*len(training_df))])
 
 
     # remove features that won't be used:
@@ -73,8 +78,8 @@ def prepare_data():
 
     #day encoding 
 
-    sin_d = [np.sin(2*np.pi*d/24) for d in day_of_year]
-    cos_d = [np.cos(2*np.pi*d/24) for d in day_of_year]
+    sin_d = [np.sin(2*np.pi*d/365) for d in day_of_year]
+    cos_d = [np.cos(2*np.pi*d/365) for d in day_of_year]
 
     # month encoding:
 
@@ -95,6 +100,7 @@ def prepare_data():
     
     print(training_df)
 
+    print(sin_h[:24])
 
 #    print(training_df['O3'][28075:])
     return(training_df)
@@ -154,7 +160,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 model_type = 1
 
 
-look_back = 24
+look_back = 12
 y_range = 1
 y_forward = 12
 LSTM_l1_dimension = 32
@@ -168,7 +174,7 @@ epochs = 30
 to_predict_feature = 'O3'
 
 predict_range = 168
-delta = 2100
+delta = 3500
 
 training_df = prepare_data()
 

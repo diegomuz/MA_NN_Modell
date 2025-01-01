@@ -55,8 +55,8 @@ cos_h = [np.cos(2*np.pi*h/24) for h in hour_of_day]
 
 #day encoding 
 
-sin_d = [np.sin(2*np.pi*d/24) for d in day_of_year]
-cos_d = [np.cos(2*np.pi*d/24) for d in day_of_year]
+sin_d = [np.sin(2*np.pi*d/365) for d in day_of_year]
+cos_d = [np.cos(2*np.pi*d/365) for d in day_of_year]
 
 # month encoding:
 

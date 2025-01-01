@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import xarray as xr
 
-
+import shap
 import tensorflow as tf
 
 
@@ -46,14 +46,17 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-#features = ['Datum','O3']
+""""
+features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
+       'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3',
+       'T', 'Hr',  'StrGlo',  'WVv', 'WVs', 'Cont_T',
+       'Cont_Hr', 'Cont_WVv', 'Cont_WVs']
 
-"""""
-
-features = ['Datum','O3','T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
-        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
+#features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
+ #     'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
 
 """
+#features = ['Datum', 'O3']
 
 num_of_feautures = 0
 
@@ -82,8 +85,8 @@ cos_h = [np.cos(2*np.pi*h/24) for h in hour_of_day]
 
 #day encoding 
 
-sin_d = [np.sin(2*np.pi*d/24) for d in day_of_year]
-cos_d = [np.cos(2*np.pi*d/24) for d in day_of_year]
+sin_d = [np.sin(2*np.pi*d/365) for d in day_of_year]
+cos_d = [np.cos(2*np.pi*d/365) for d in day_of_year]
 
 # month encoding:
 
@@ -151,7 +154,7 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
     X_tr = np.array(X_tr)
     Y_tr = np.array(Y_tr)
 
-    #alle + 12 wegmachen nachher
+ 
 
     X_te, Y_te = [],[]
 
@@ -178,7 +181,7 @@ def run():
     model_type = 1
 
 
-    look_back = 24
+    look_back = 12
     y_range = 1
 
     LSTM_l1_dimension = 32
@@ -199,8 +202,8 @@ def run():
 
     model = Sequential()
     if model_type == 1:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False) )    
-        
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False))    
+
 
     if model_type == 2:
         model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
@@ -209,21 +212,16 @@ def run():
 
     if model_type == 3:
         model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
-        model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l2_dimension, return_sequences=True, recurrent_dropout=0.3))
-        model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l2_dimension, return_sequences=False, recurrent_dropout=0.3))
-        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=True))
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=False))
+
      
     if model_type == 4:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True, recurrent_dropout=0.3))
-        model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l2_dimension, return_sequences=True, recurrent_dropout=0.3))
-        model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l3_dimension, return_sequences=True,    recurrent_dropout=0.3))
-        model.add(Dropout(0.2))
-        model.add(LSTM(LSTM_l4_dimension, return_sequences=False, recurrent_dropout=0.3))
-        model.add(Dropout(0.2))
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=True))
+        model.add(LSTM(LSTM_l2_dimension, return_sequences=True))
+        model.add(LSTM(LSTM_l3_dimension, return_sequences=True))
+        model.add(LSTM(LSTM_l4_dimension, return_sequences=False))
+        
 
 
     model.add(Dense(y_range))
@@ -310,10 +308,12 @@ def run():
 
     print('Model was trained')
 
+
+
+
 #X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, 'O3', 1, 1)
 
 run()
-
 
 
 

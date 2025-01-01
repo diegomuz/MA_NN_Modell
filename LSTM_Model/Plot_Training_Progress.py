@@ -9,16 +9,16 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
 #features = ['Datum','O3']
 
 num_of_feautures = 35
-model_type = 1
+model_type = 3
 
-look_back = 36
+look_back = 12
 y_range = 1
-y_forward = 1
+y_forward = 12
 LSTM_l1_dimension = 32
 
-LSTM_l2_dimension = 64
+LSTM_l2_dimension = 32
 
-LSTM_l3_dimension = 64
+LSTM_l3_dimension = 32
 
 batchsize = 32
 epochs = 20
@@ -32,7 +32,7 @@ if model_type == 1:
         loaded_history = json.load(f)
 
 if model_type == 2:
-    with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'r') as f:
+    with open(f'LSTM_Model/Histories/{to_predict_feature}-History-Type{model_type}(dim-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).json', 'r') as f:
         loaded_history = json.load(f)
 
 if model_type == 3:

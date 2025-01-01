@@ -122,6 +122,7 @@ def meteo_main(year,reserve):
 
     print('\n Processing...')
 
+    outlier_count = 0
 
     # identify outliers and replace them: 
     
@@ -146,7 +147,8 @@ def meteo_main(year,reserve):
 
                     if i < reserve + 1 or i > len(df) -reserve -1: 
 
-                        if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                        if df.count(df[i]) <= min_occurence and not (lower_fence <= df[i] <= upper_fence):
+                            outlier_count += 1
                             if df[i] <= lower_fence:
                                 df[i] = lower_fence
                             elif df[i] > upper_fence:
@@ -155,7 +157,8 @@ def meteo_main(year,reserve):
                             
 
                     else: 
-                        if df.count(df[i]) <= min_occurence and not lower_fence <= df[i] <= upper_fence:
+                        if df.count(df[i]) <= min_occurence and not (lower_fence <= df[i] <= upper_fence):
+                            outlier_count += 1
                             a = None
                             b = None
 
@@ -184,7 +187,7 @@ def meteo_main(year,reserve):
             Clean_meteo_df[cols] = df
                                 
 
-
+    print(f'Removed {outlier_count} outliers\n That is {100*outlier_count/(len(Clean_meteo_df)*(len(Clean_meteo_df.columns)-1))}%') 
 
     # Daten in netcdf file speichern: 
 

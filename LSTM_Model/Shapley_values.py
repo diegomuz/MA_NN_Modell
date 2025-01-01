@@ -26,13 +26,60 @@ features = [ 'Datum','CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-
+num_of_feautures = 0
 
 for feature in training_df.columns:
     if feature not in features:
         training_df.drop(feature, axis = 1, inplace=True)
 
 print(training_df)
+
+features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
+            'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3', 'Cont_PM10', 'Cont_PM2.5',
+            'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
+            'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs',
+            'sin_h', 'cos_h', 'sin_d', 'cos_d', 'sin_m', 'cos_m']
+
+# encode month&day in the year and hour of the day:
+
+Datum = pd.to_datetime(training_df['Datum'], format='%Y-%m-%dT%H:%M%z')
+
+day_of_year = Datum.dt.day_of_year
+hour_of_day = Datum.dt.hour
+month_of_year = Datum.dt.month
+
+
+
+# hour encoding:
+
+sin_h = [np.sin(2*np.pi*h/24) for h in hour_of_day]
+cos_h = [np.cos(2*np.pi*h/24) for h in hour_of_day]
+
+#day encoding 
+
+sin_d = [np.sin(2*np.pi*d/365) for d in day_of_year]
+cos_d = [np.cos(2*np.pi*d/365) for d in day_of_year]
+
+# month encoding:
+
+
+sin_m = [np.sin(2*np.pi*m/12) for m in month_of_year]
+cos_m = [np.cos(2*np.pi*m/12) for m in month_of_year]
+
+# add embeddings to training_df:
+
+
+
+training_df['sin_h'] = sin_h
+training_df['cos_h'] = cos_h
+training_df['sin_d'] = sin_d
+training_df['cos_d'] = cos_d
+training_df['sin_m'] = sin_m
+training_df['cos_m'] = cos_m
+
+
+print(training_df)
+
 
 # split, scale data
 
@@ -46,7 +93,8 @@ def split_scale_data(df,split_percentage):
     train_data = scaled_df.iloc[:split_point]
     test_data = scaled_df.iloc[split_point:].reset_index(drop=True)
 
-    
+    global num_of_feautures
+    num_of_feautures = len(train_data.columns)
 
 
     return train_data, test_data
@@ -69,22 +117,27 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
 
 
-    for i in range(len(train_data)- timesteps - y_range + 1):
+    for i in range(len(train_data)- timesteps - y_range + 1 -y_forward):
         X_tr.append(train_data.iloc[i: i+timesteps])
-        Y_tr.append(train_data[to_predict_feature][i+timesteps : i+timesteps+y_range])
+        Y_tr.append(train_data[to_predict_feature][i+timesteps +y_forward -1 : i+timesteps+y_range + y_forward -1])
+
+
+
 
     X_tr = np.array(X_tr)
     Y_tr = np.array(Y_tr)
 
 
+
     X_te, Y_te = [],[]
 
-    for i in range(len(test_data) - timesteps - y_range +1):
+    for i in range(len(test_data) - timesteps - y_range +1 -y_forward):
         X_te.append(test_data.iloc[i: i+timesteps])
-        Y_te.append(test_data[to_predict_feature][i+timesteps : i+timesteps+y_range])
+        Y_te.append(test_data[to_predict_feature][i+timesteps + y_forward -1 : i+timesteps+y_range + y_forward -1])
 
     X_te = np.array(X_te)
     Y_te = np.array(Y_te)
+
 
     return X_tr, Y_tr, X_te, Y_te
 
@@ -100,8 +153,9 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
 model_type = 1
 to_predict_feature = 'O3'
-LSTM_l1_dimension = 29
+LSTM_l1_dimension = 32
 LSTM_l2_dimension = 10
+y_forward = 24
 y_range = 1
 batchsize = 32
 look_back = 24
@@ -115,9 +169,9 @@ Train_df, l = split_scale_data(training_df,0.8)
 
 if model_type == 1:
 
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
-else:
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
+if model_type == 2:
+    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{len(features)-1}).keras')
 
 
 model.summary()
@@ -130,16 +184,8 @@ del(features[0])
 
 print(X_train.shape)
 
-X_train_flat = X_train.reshape(X_train.shape[0], -1)
 
-print(X_train_flat.shape)
-
-#explainer = shap.Explainer(model,X_train)
-
-#shap_values = explainer(X_train[0])
-#shap_values = shap_values.values.mean(axis=1)
-
-#shap.summary_plot(shap_values, X_train)
-
-
-
+# Create an object that can calculate shap values
+explainer = shap.KernelExplainer(model, X_train)
+# Calculate Shap values
+shap_values = explainer.shap_values(X_test)
