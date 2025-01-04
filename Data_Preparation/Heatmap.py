@@ -222,7 +222,7 @@ correlation_matrix = correlation_matrix.iloc[selected_cols, selected_rows]
 
 #print(correlation_matrix)
 
-plt.figure(figsize=(15, 15))
+plt.figure(figsize=(10, 7))
 
 
 heatmap = sns.heatmap(correlation_matrix, vmin = -1, vmax = 1, annot = True, fmt=".2f", xticklabels = data.columns[selected_rows])

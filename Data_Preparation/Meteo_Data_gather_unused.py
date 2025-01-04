@@ -194,7 +194,7 @@ def meteo_main(year,reserve):
     #print(Clean_dxr.dims)
     #print(Clean_dxr.variables)
 
-    Clean_dxr.to_netcdf(f"Data_Preparation/clean_Meteo_Datasets/Gereinigte Meteo-Daten {year}.nc", format='NETCDF4', mode = 'w' )
+    Clean_dxr.to_netcdf(f"Data_Preparation/clean_Meteo_Datasets_unused/Gereinigte Meteo-Daten {year}.nc", format='NETCDF4', mode = 'w' )
 
     return(Clean_meteo_df)
     

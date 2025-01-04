@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import xarray as xr
-from Air_Data_gather2 import air_main
-from Meteo_Data_gather2 import meteo_main
+from Air_Data_gather import air_main
+from Meteo_Data_gather import meteo_main
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import KNNImputer
 

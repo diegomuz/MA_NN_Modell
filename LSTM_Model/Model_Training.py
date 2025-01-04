@@ -10,7 +10,7 @@ import tensorflow as tf
 from tf_keras.models import Sequential
 from tf_keras.layers import  Dense
 from tf_keras.layers import LSTM
-from tf_keras.layers import Dropout
+
 
 from tf_keras.callbacks import TensorBoard
 from tf_keras.callbacks import EarlyStopping
@@ -255,7 +255,7 @@ def run():
         
     if model_type == 3:
 
-        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}_withDropout).keras',
+        mc = ModelCheckpoint(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras',
                              monitor = 'val_loss', mode = 'min', verbose=1, save_best_only=True)
         
     if model_type == 4:

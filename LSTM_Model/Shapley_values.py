@@ -1,3 +1,6 @@
+# Did not work because the shapley.Deepexplainer doesn't support sequantial models with this tf_keras version
+
+
 import matplotlib.pyplot as plt
 import numpy as np 
 import pandas as pd 
@@ -186,6 +189,6 @@ print(X_train.shape)
 
 
 # Create an object that can calculate shap values
-explainer = shap.KernelExplainer(model, X_train)
+explainer = shap.DeepExplainer(model, X_train)
 # Calculate Shap values
 shap_values = explainer.shap_values(X_test)

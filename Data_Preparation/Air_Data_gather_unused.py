@@ -214,7 +214,7 @@ def air_main(year,reserve):
 
     Clean_dxr = xr.Dataset.from_dataframe(Clean_air_df)
 
-    Clean_dxr.to_netcdf(f"Data_Preparation/clean_Air_Datasets/Gereinigte Luft-Daten {year}.nc", format= 'NETCDF4', mode = 'w' )
+    Clean_dxr.to_netcdf(f"Data_Preparation/clean_Air_Datasets_unused/Gereinigte Luft-Daten {year}.nc", format= 'NETCDF4', mode = 'w' )
 
     return(Clean_air_df)
 
