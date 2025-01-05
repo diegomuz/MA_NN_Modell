@@ -11,7 +11,7 @@ Programme, welche in diesen Ordnern nicht verwendet wurden haben das Suffix "_un
 
 Data_Preparation:
 
-Es enthält folgende Programme:
+Enthält folgende Programme:
 
 Download_Raw_Data.py: Lädt die rohen Datensätze von der Stadt Zürich aus der Website https://data.stadt-zuerich.ch/dataset herunter und speichert sie in den entsprechenden Ordnern "Air_Datasets", "Meteo_Datasets" und "Traffic_Datasets" ab.
 
@@ -25,3 +25,5 @@ Create_Training_Dataset.py: Nimmt die von Ausreissern bereinigten Dataframes aus
 
 
 LSTM_Model:
+
+Hier werden die verschiedenen LSTM-Modelle trainiert und evaluiert. 
