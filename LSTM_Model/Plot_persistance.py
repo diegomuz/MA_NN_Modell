@@ -52,21 +52,5 @@ diff, roc_l = calculate_roc(prepare_data(), to_predict_feature)
 mean_diff = np.mean(diff)
 mean_roc = np.round(np.mean(roc_l),2)
 
-#print(roc_l)
-
-plt.plot(roc_l, color = 'red')
-plt.title('Änderungsrate der Ozonkonzentration')
-plt.ylabel('Änderungsrate - %')
-plt.xlabel('Stunden')
-plt.yscale('linear')
-
-
-plt.text(0.95, 0.95, f'mittlere Änderngsrate = {mean_roc}%', 
-         transform=plt.gca().transAxes, 
-         fontsize=8, 
-         verticalalignment='top', 
-         horizontalalignment='right',
-         bbox=dict(boxstyle="round", facecolor="white", edgecolor="gray"))
-
-plt.show()
+print(mean_roc)
     
