@@ -1,0 +1,6 @@
+pip install numpy==1.26.4
+pip install pandas==2.2.2
+pip install plotly==5.24.1
+pip install matplotlib==3.9.1
+pip install xarray==2024.9.0
+pip install tf_keras==2.18.0

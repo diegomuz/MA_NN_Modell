@@ -72,5 +72,29 @@ Die Modelle werden im Ordner *Models* abgespeichert, die Test- und Trainings-MSE
 Hier können die Trainings- und Test-MSE-Werte mehrerer Modelle mit einem Balkendiagramm verglichen werden. Die Modelle, die verglichen werden, können im Code spezifiziert werden.
 
 
+## Libraries, die installiert werden müssen
 
+- NumPy version: 1.26.4
+- TensorFlow Keras version: 2.18.0
+- Pandas version: 2.2.2
+- Plotly version: 5.24.1
+- Matplotlib version: 3.9.1
+- Xarray version: 2024.9.0
+
+Mit dem Programm *print_lib_versions.py* kann kontrolliert werden, ob man diese Libraries bereits hat und ob man die richtige Version hat.
+Die Commands im Textfile *install_libraries.txt* können ins Terminal kopiert werden, um die Libraries automatisch herunterzuladen.
+
+Hier sind sie nochmals aufgelistet:
+
+pip install numpy==1.26.4
+pip install pandas==2.2.2
+pip install plotly==5.24.1
+pip install matplotlib==3.9.1
+pip install xarray==2024.9.0
+pip install tf_keras==2.18.0
+
+Es empfiehlt sich, falls man bereits andere Versionen dieser Libraries hat,  ein Virtual Environment zu kreieren, um den Code laufen zu lassen. 
+Hier ist der Command, um das Virtual Environment zu kreieren:
+
+python -m venv C:\path\to\new\virtual\environment
 
