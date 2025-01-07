@@ -7,12 +7,10 @@ Die Programme sind in fünf Ordner aufgeteilt:
 - Graphics
 - logs
 
-Für die Arbeit wurden jedoch nur die Ordner Data_Preparation, LSTM_Model und Graphics verwendet. Die anderen beiden Ordner enthalten trainierte XGboost Modell und Sammlungen der Fehlermetriken für die LSTM-Modelle. Die Programme in diesem Foldern wurden jedoch nicht für die schrifliche Arbeit verwendet.
+Für die Arbeit wurden jedoch nur die Ordner Data_Preparation, LSTM_Model und Graphics verwendet. Die anderen beiden Ordner enthalten trainierte XGboost Modelle und Sammlungen der Fehlermetriken für die LSTM-Modelle. Die Programme in diesen Ordnern wurden jedoch nicht für die schriftliche Arbeit verwendet.
 
-
-Es folgt nun eine Erläuterung über die zwei Ordner Data_Preparation und LSTM_Model
-Programme, welche in diesen Ordnern nicht verwendet wurden haben das Suffix "_unused" im Dateinamen.
-
+Es folgt nun eine Erläuterung über die zwei Ordner Data_Preparation und LSTM_Model.
+Programme, welche in diesen Ordnern nicht verwendet wurden, haben das Suffix "_unused" im Dateinamen.
 
 ## Data_Preparation:
 
@@ -24,7 +22,7 @@ Lädt die rohen Datensätze von der Stadt Zürich aus der Website https://data.s
 
 2. Heatmap.py: 
 
-Erstellt eine Heatmap mit der Korrelation zwischen der Ozonkonzentration und den anderen Features im Datensatz. Es kann spezifiziert werden zwischen welchen Features in den Datensätzen die Korrelation bestimmt wird.
+Erstellt eine Heatmap mit der Korrelation zwischen der Ozonkonzentration und den anderen Features im Datensatz. Es kann spezifiziert werden, zwischen welchen Features in den Datensätzen die Korrelation bestimmt wird.
 
 3. Air_Data_gather.py: 
 
@@ -46,32 +44,32 @@ Der Ordner enthält folgende Programme:
 
 1. Model_Training.py: 
 
-  Hier werden die LSTM-Modelle trainiert. Es kann spezifiziert werden von welchem Feature die Vorhersagen gemacht werden. Ebenfalls kann bestimmt werden mit welchen Inputfeatures das Modell     trainiert wird. 
+  Hier werden die LSTM-Modelle trainiert. Es kann spezifiziert werden, von welchem Feature die Vorhersagen gemacht werden. Ebenfalls kann bestimmt werden, mit welchen Inputfeatures das Modell trainiert wird. 
 
 Folgende Parameter können angepasst werden:
 
-- Anzhal LSTM-Layer: Wird angegeben durch *model_type*.
-- Outputdimension der LSTM-Layer: Wird angegeben durch *LSTM_l_dimension*
-- t, Anzahl der vorhergehenden Stundenmessungen anhand derer das Modell die Vorhersagen macht: Wird angegeben durch *look_back*
-- ∆t, Vorhersagehorizonz, also wie viele Stunden in die Zukunft sich die vorhergesagte Stunde befindet: Wird angegeben durch *y_forward*
+- Anzahl LSTM-Layer: Wird angegeben durch *model_type*.
+- Outputdimension der LSTM-Layer: Wird angegeben durch *LSTM_l_dimension*.
+- t, Anzahl der vorhergehenden Stundenmessungen, anhand derer das Modell die Vorhersagen macht: Wird angegeben durch *look_back*.
+- ∆t, Vorhersagehorizont, also wie viele Stunden in die Zukunft sich die vorhergesagte Stunde befindet: Wird angegeben durch *y_forward*.
   
 Die Modelle werden im Ordner *Models* abgespeichert, die Test- und Trainings-MSE-Werte werden im Ordner *Histories* abgespeichert.
 
 2. Automate_Train_diff_configs.py:
 
-  Funktioniert wie *Model_Training.py*. Hier können mehrere verschiedene Modelle auf einmal trainiert werden. Wobei bei jedem die veränderbaren Parameter der Modellarchitektur und des Modelltrainingsangegeben werden können.
+  Funktioniert wie *Model_Training.py*. Hier können mehrere verschiedene Modelle auf einmal trainiert werden, wobei bei jedem die veränderbaren Parameter der Modellarchitektur und des Modelltrainings angegeben werden können.
 
 3. Evaluate_Model.py:
 
-  Hier werden die Modelle evaluiert. Man spezifiziert das Modell, welches untersucht wird. Es kann mit *predict_range* angegeben werden für wie viele Stunden die Vorhersage ist. Ebenfalls kann mit *delta* angegeben werden von der wievielten Stunde im Testdatensatz aus die Vorhersagen gemacht werden. Die Vorhersagen werden dann aufgezeichnet und mit den echten Werten verglichen. Es werden die Fehlermetriken *RMSE*, *MAE* und *Pearson-Koeffizient* berechnet. Die entstehenden Diagramme werden dann im Ordner *Graphics* abgespeichert.
+  Hier werden die Modelle evaluiert. Man spezifiziert das Modell, welches untersucht wird. Es kann mit *predict_range* angegeben werden, für wie viele Stunden die Vorhersage ist. Ebenfalls kann mit *delta* angegeben werden, von der wievielten Stunde im Testdatensatz aus die Vorhersagen gemacht werden. Die Vorhersagen werden dann aufgezeichnet und mit den echten Werten verglichen. Es werden die Fehlermetriken *RMSE*, *MAE* und *Pearson-Koeffizient* berechnet. Die entstehenden Diagramme werden dann im Ordner *Graphics* abgespeichert.
 
 4. Plot_Training_Progress.py:
 
-   Hier werden das Trainings- und Test-MSE während des Modelltrainings aufgezeichnet. Man kann so sehen wie die Modelle lernen. Die Diagramme werden im Ordner *Graphics* abgespeichert.
+   Hier werden das Trainings- und Test-MSE während des Modelltrainings aufgezeichnet. Man kann so sehen, wie die Modelle lernen. Die Diagramme werden im Ordner *Graphics* abgespeichert.
 
 5. Compare_Models.py:
 
-Hier können die Trainings- und Test-MSE-Werte mehrerer Modelle mit einem Balkendiagramm verglichen werden. Die Modelle, die verglichen werden, können im Code spezifiziert werden. 
+Hier können die Trainings- und Test-MSE-Werte mehrerer Modelle mit einem Balkendiagramm verglichen werden. Die Modelle, die verglichen werden, können im Code spezifiziert werden.
 
 
 
