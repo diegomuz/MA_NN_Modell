@@ -1,4 +1,4 @@
-#LSTM-Modelle für die Vorhersage der Ozonkonzentration
+**LSTM-Modelle für die Vorhersage der Ozonkonzentration**
 
 Die Programme sind in fünf Ordner aufgeteilt: 
 - Data_Preparation 
@@ -14,7 +14,7 @@ Es folgt nun eine Erläuterung über die drei Ordner Data_Preparation, LSTM_Mode
 Programme, welche in diesen Ordnern nicht verwendet wurden haben das Suffix "_unused" im Dateinamen.
 
 
-##Data_Preparation:
+*Data_Preparation:*
 
 Enthält folgende Programme:
 
