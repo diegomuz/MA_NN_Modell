@@ -86,15 +86,15 @@ Die Commands im Textfile *install_libraries.txt* können ins Terminal kopiert we
 
 Hier sind sie nochmals aufgelistet:
 
-pip install numpy==1.26.4
-pip install pandas==2.2.2
-pip install plotly==5.24.1
-pip install matplotlib==3.9.1
-pip install xarray==2024.9.0
-pip install tf_keras==2.18.0
+- pip install numpy==1.26.4
+- pip install pandas==2.2.2
+- pip install plotly==5.24.1
+- pip install matplotlib==3.9.1
+- pip install xarray==2024.9.0
+- pip install tf_keras==2.18.0
 
 Es empfiehlt sich, falls man bereits andere Versionen dieser Libraries hat,  ein Virtual Environment zu kreieren, um den Code laufen zu lassen. 
 Hier ist der Command, um das Virtual Environment zu kreieren:
 
-python -m venv C:\path\to\new\virtual\environment
+- python -m venv C:\path\to\new\virtual\environment
 
