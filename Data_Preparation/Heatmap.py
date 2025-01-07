@@ -202,7 +202,7 @@ data = pd.DataFrame(fin_data)
 
 print("\n")
 
-print(data.iloc[:,4:])
+
 
 # creating the heatmap
 
@@ -217,6 +217,8 @@ correlation_matrix = data.corr(numeric_only=True, method='pearson')
 selected_rows = [36]
 selected_cols = [30,34,6,19, 18, 35,7,20,41, 37, 9, 22, 38, 10, 23, 40, 43, 31,42, 44, 45, 48,  47, 32, 39]
 
+# Select the features between which the correlation should be calculated.
+# grouped data contains the indexes of each feature
 
 correlation_matrix = correlation_matrix.iloc[selected_cols, selected_rows]
 
