@@ -48,10 +48,10 @@ Der Ordner enthält folgende Programme:
 
    Folgende Parameter können angepasst werden:
 
-- Anzahl LSTM-Layer: Wird angegeben durch **model_type**.
-- Outputdimension der LSTM-Layer: Wird angegeben durch **LSTM_l_dimension**.
-- t, Anzahl der vorhergehenden Stundenmessungen, anhand derer das Modell die Vorhersagen macht: Wird angegeben durch **look_back**.
-- ∆t, Vorhersagehorizont, also wie viele Stunden in die Zukunft sich die vorhergesagte Stunde befindet: Wird angegeben durch **y_forward**.
+   - Anzahl LSTM-Layer: Wird angegeben durch **model_type**.
+   - Outputdimension der LSTM-Layer: Wird angegeben durch **LSTM_l_dimension**.
+   - t, Anzahl der vorhergehenden Stundenmessungen, anhand derer das Modell die Vorhersagen macht: Wird angegeben durch **look_back**.
+   - ∆t, Vorhersagehorizont, also wie viele Stunden in die Zukunft sich die vorhergesagte Stunde befindet: Wird angegeben durch **y_forward**.
   
    Die Modelle werden im Ordner **Models** abgespeichert, die Test- und Trainings-MSE-Werte werden im Ordner **Histories** abgespeichert.
 
