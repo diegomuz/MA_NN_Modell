@@ -162,8 +162,8 @@ model_type = 1
 
 look_back = 12
 y_range = 1
-y_forward = 24
-LSTM_l1_dimension = 32
+y_forward = 12
+LSTM_l1_dimension = 128
 LSTM_l2_dimension = 32
 LSTM_l3_dimension = 32
 LSTM_l4_dimension = 64
@@ -294,7 +294,7 @@ print(predicted_vals)
 
 
 
-
+""""
 
 plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
 
@@ -364,4 +364,53 @@ if model_type == 4:
 
 plt.show()
 
+"""
 
+#für dunklen Background:
+
+# Plot curves with high contrast colors
+plt.plot(actual_vals, label='Echte Werte', color='yellow')  # Bright green
+plt.plot(predicted_vals, label='Vorhersagen', color='cyan')  # Bright blue
+
+# Calculate metrics
+rmse = np.sqrt(mean_squared_error(actual_vals, predicted_vals))
+mae = mean_absolute_error(actual_vals, predicted_vals)
+correlation = np.corrcoef(actual_vals, predicted_vals)[0, 1]
+
+metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
+print(metrics_text)
+
+# Add metrics text box with dark background and white text
+plt.text(0.95, 0.95, metrics_text, 
+         transform=plt.gca().transAxes, 
+         fontsize=8, 
+         verticalalignment='top', 
+         horizontalalignment='right',
+         bbox=dict(boxstyle="round", facecolor="#222222", edgecolor="white"),
+         color='white')
+
+# Set dark mode styles
+ax = plt.gca()
+ax.set_facecolor('none')  # transparent plot area
+plt.gcf().patch.set_alpha(0)  # transparent figure background
+
+# Make all text and ticks white
+ax.tick_params(colors='white')
+ax.spines['bottom'].set_color('white')
+ax.spines['left'].set_color('white')
+ax.xaxis.label.set_color('white')
+ax.yaxis.label.set_color('white')
+ax.title.set_color('white')
+
+# Legend styling
+legend = plt.legend(loc="upper left", facecolor="#222222", edgecolor='white')
+for text in legend.get_texts():
+    text.set_color('white')
+
+# Labels and title
+plt.title(f'{to_predict_feature} - Konzentration')
+plt.ylabel('Konzentration in µg/m3')
+plt.xlabel('Stunden')
+
+# Save or show with transparent background
+plt.show()

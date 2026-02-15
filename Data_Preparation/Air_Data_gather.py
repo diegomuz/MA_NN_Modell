@@ -214,13 +214,13 @@ def air_main(year,reserve):
     print(f'Removed {outlier_count} outliers\n That is {100*outlier_count/(len(Clean_air_df)*(len(Clean_air_df.columns)-1))}%')  
     
 
-                
+    """"           
     # Daten in netcdf file speichern: 
 
     Clean_dxr = xr.Dataset.from_dataframe(Clean_air_df)
 
     Clean_dxr.to_netcdf(f"Data_Preparation/clean_Air_Datasets/Gereinigte Luft-Daten {year}.nc", format= 'NETCDF4', mode = 'w' )
-
+    """
     return(Clean_air_df)
 
 
