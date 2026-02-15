@@ -14,7 +14,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 year = 2023
-offset = 3
+offset = 12
 
 d1 = pd.read_csv(f"Data_Preparation/Air_Datasets/ugz_ogd_air_h1_{year}.csv")
 d2 = pd.read_csv(f"Data_Preparation/Meteo_Datasets/ugz_ogd_meteo_h1_{year}.csv")
