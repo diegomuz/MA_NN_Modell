@@ -27,6 +27,8 @@ import json
 from sklearn.preprocessing import MinMaxScaler
 
 
+print(tf.config.list_physical_devices('GPU'))
+
 
 year_list = [2020,2021,2022,2023]
 
