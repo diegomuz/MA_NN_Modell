@@ -133,42 +133,55 @@ def split_scale_data(df,split_percentage):
 # x_timesteps, how many hours back it looks at once to predict the next values
 
 
-def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_range):
-    train_data , test_data = split_scale_data(df,split_percentage)
+def create_training_data(df, split_percentage: list, to_predict_feature, timesteps, y_range):
+    train_data, test_data = split_scale_data(df, split_percentage[0])
+    
+    # Further split test_data into validation and test
+    val_split = (split_percentage[1]-split_percentage[0])/(1-split_percentage[0])
+    split_point = round(len(test_data) * val_split)
+    val_data = test_data.iloc[:split_point].reset_index(drop=True)
+    test_data = test_data.iloc[split_point:].reset_index(drop=True)
 
     print(train_data)
+    print(val_data)
     print(test_data)
 
     # number of features is number of cols in train_data
     X_tr, Y_tr = [],[]
 
-
-
-    for i in range(len(train_data)- timesteps - y_range + 1 -y_forward):
+    for i in range(len(train_data) - timesteps - y_range + 1 - y_forward):
         X_tr.append(train_data.iloc[i: i+timesteps])
-        Y_tr.append(train_data[to_predict_feature][i+timesteps +y_forward -1 : i+timesteps+y_range + y_forward -1])
-
-
-
+        Y_tr.append(train_data[to_predict_feature][i+timesteps + y_forward - 1 : i+timesteps+y_range + y_forward - 1])
 
     X_tr = np.array(X_tr)
     Y_tr = np.array(Y_tr)
 
- 
+    # Validation data
+    X_val, Y_val = [], []
 
-    X_te, Y_te = [],[]
+    for i in range(len(val_data) - timesteps - y_range + 1 - y_forward):
+        X_val.append(val_data.iloc[i: i+timesteps])
+        Y_val.append(val_data[to_predict_feature][i+timesteps + y_forward - 1 : i+timesteps+y_range + y_forward - 1])
 
-    for i in range(len(test_data) - timesteps - y_range +1 -y_forward):
+    X_val = np.array(X_val)
+    Y_val = np.array(Y_val)
+
+    # Test data
+    X_te, Y_te = [], []
+
+    for i in range(len(test_data) - timesteps - y_range + 1 - y_forward):
         X_te.append(test_data.iloc[i: i+timesteps])
-        Y_te.append(test_data[to_predict_feature][i+timesteps + y_forward -1 : i+timesteps+y_range + y_forward -1])
+        Y_te.append(test_data[to_predict_feature][i+timesteps + y_forward - 1 : i+timesteps+y_range + y_forward - 1])
 
     X_te = np.array(X_te)
     Y_te = np.array(Y_te)
 
+    print(X_val[:14])
+    print(Y_val[:14])
     print(X_te[:14])
     print(Y_te[:14])
 
-    return X_tr, Y_tr, X_te, Y_te
+    return X_tr, Y_tr, X_te, Y_te, X_val, Y_val, 
 
 
 y_forward = 12
@@ -194,7 +207,7 @@ def run():
 
     to_predict_feature = 'O3'
 
-    X_train,Y_train,X_test,Y_test = create_training_data(training_df, 0.8, to_predict_feature, look_back, y_range)
+    X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
 
     print(X_train.shape)
 
@@ -274,7 +287,7 @@ def run():
             Y_train, 
             epochs=epochs,
             batch_size = batchsize, 
-            validation_data=(X_test, Y_test), 
+            validation_data=(X_val, Y_val), 
             callbacks=[tensorboard_callback, es, mc])
 
 
