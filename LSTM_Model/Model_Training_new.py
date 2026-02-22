@@ -28,7 +28,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 
-year_list = [2020,2021,2022,2023]
+year_list = [2020,2021,2022,2023, 2024]
 
 training_df = pd.DataFrame()
 
@@ -181,7 +181,7 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
     print(X_te[:14])
     print(Y_te[:14])
 
-    return X_tr, Y_tr, X_te, Y_te, X_val, Y_val, 
+    return X_tr, Y_tr, X_te, Y_te, X_val, Y_val 
 
 
 y_forward = 12

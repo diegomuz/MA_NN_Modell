@@ -227,6 +227,8 @@ def create_training_data(df,split_percentage, to_predict_feature, timesteps, y_r
 
 
 
+
+
 def run(model_type, look_back, y_range, y_forward, LSTM_l1_dimension,LSTM_l2_dimension,LSTM_l3_dimension,batchsize,epochs, to_predict_feature, features):
     model_type = model_type
 

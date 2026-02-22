@@ -6,7 +6,7 @@ from Meteo_Data_gather import meteo_main
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.impute import KNNImputer
 
-YEAR = 2023
+YEAR = 2024
 
 
 

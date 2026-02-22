@@ -10,6 +10,18 @@ def air_main(year,reserve):
 
     All_data = pd.read_csv(f"Data_Preparation/Air_Datasets/ugz_ogd_air_h1_{year}.csv")
 
+ 
+    
+    #reshape year 2024 to the 2020-2023 structure
+    if year == 2024: 
+        All_data = All_data[
+            ~(
+                (All_data["Standort"] == "Zch_Heubeeribüel") &
+                (All_data["Parameter"].isin(["PM10", "PM2.5"]))
+            )
+        ].reset_index(drop=True)
+        print(All_data[:24])
+
     # Plan: Resultat soll wieder ein pandas dataframe sein, das Aussihet wie 'All_data' aber keine NA werte mehr hat und wo es nur noch hat 
     # Stampfenbachstrasse und Rosengarten/Schimmelstrasse zusammen. Die beiden letzteren sollen kontext geben dem Modell
     # Es werden nur Jahre verwendet, wo Stampfenbachstrasse deutlich am wenigsten fehlende Messwerte hat

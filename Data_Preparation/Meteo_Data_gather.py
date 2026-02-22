@@ -14,6 +14,39 @@ def meteo_main(year,reserve):
     # Stampfenbachstrasse und Rosengarten/Schimmelstrasse zusammen. Die beiden letzteren sollen kontext geben dem Modell
     # Es werden nur Jahre verwendet, wo Stampfenbachstrasse deutlich am wenigsten fehlende Messwerte h
 
+    # adjust the csv structure for year 2024 to the one from years 2020-2023
+    if year == 2024:
+        # the code inside ths if statement was written with the help of ai, the rest is all self written
+        df_2024 = All_data
+        df_2023 = pd.read_csv("Data_Preparation/Meteo_Datasets/ugz_ogd_meteo_h1_2023.csv")
+
+        # Remove Heubeeribüel
+        df_2024 = df_2024[df_2024["Standort"] != "Zch_Heubeeribüel"]
+
+        # Extract correct order from 2023
+        station_order = df_2023["Standort"].unique()
+        parameter_order = (
+            df_2023[df_2023["Standort"] == station_order[0]]["Parameter"].unique()
+        )
+
+        # Apply ordering to 2024
+        df_2024["Standort"] = pd.Categorical(
+            df_2024["Standort"],
+            categories=station_order,
+            ordered=True
+        )
+
+        df_2024["Parameter"] = pd.Categorical(
+            df_2024["Parameter"],
+            categories=parameter_order,
+            ordered=True
+        )
+
+        df_2024 = df_2024.sort_values(
+            ["Datum", "Standort", "Parameter"]
+        ).reset_index(drop=True)
+
+        All_data = df_2024
 
     print(All_data)
 

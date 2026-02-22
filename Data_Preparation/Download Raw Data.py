@@ -4,11 +4,11 @@ import requests
 # Hier werden die Datensätze runtergeladen von des website der Stadt Zürich:
 # mit diesem Tutorial: https://www.tutorialspoint.com/downloading-files-from-web-using-python
 
-n = 1
+n = 2
 
 for i in range(n):
 
-    year = 2024  - i
+    year = 2025  - i
 
     # Luftdatensätze:
 
