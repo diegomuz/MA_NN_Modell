@@ -303,7 +303,7 @@ def run(model_type, look_back, y_range, y_forward, LSTM_l1_dimension,LSTM_l2_dim
 
     to_predict_feature = to_predict_feature
 
-    X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(prepare_data(features), 0.8, to_predict_feature, look_back, y_range,y_forward)
+    X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(prepare_data(features), [0.7,0.9], to_predict_feature, look_back, y_range,y_forward)
 
     print(X_train.shape)
 
