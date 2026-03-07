@@ -356,17 +356,13 @@ def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 2000):
     corr_arr = np.array(corr_list)
 
     results = {
-        "rmse_mean": rmse_arr.mean(),
-        "rmse_std": rmse_arr.std(),
-        "rmse_low": np.percentile(rmse_arr,2.5),
-        "rmse_high": np.percentile(rmse_arr,97.5),
+    "rmse": f"{rmse_arr.mean():.4f} ± {rmse_arr.std():.4f}",
+    "rmse_ci95": f"[{np.percentile(rmse_arr,2.5):.4f}, {np.percentile(rmse_arr,97.5):.4f}]",
 
-        "mae_mean": mae_arr.mean(),
-        "mae_std": mae_arr.std(),
+    "mae": f"{mae_arr.mean():.4f} ± {mae_arr.std():.4f}",
 
-        "corr_mean": corr_arr.mean(),
-        "corr_std": corr_arr.std()
-    }
+    "corr": f"{corr_arr.mean():.4f} ± {corr_arr.std():.4f}"
+}
 
     return results
 
