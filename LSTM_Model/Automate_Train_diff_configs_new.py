@@ -364,7 +364,7 @@ def run(model_type, look_back, y_range, y_forward, LSTM_l1_dimension,LSTM_l2_dim
             Y_train, 
             epochs=epochs,
             batch_size = batchsize, 
-            validation_data=(X_test, Y_test), 
+            validation_data=(X_val, Y_val), 
             callbacks=[tensorboard_callback, es, mc])
 
 

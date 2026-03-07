@@ -1,6 +1,6 @@
-#import tensorflow as tf
+import tensorflow
 import tf_keras
-
+from tf_keras.models import load_model
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -178,10 +178,10 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
 model_type = 1
 
 
-look_back = 12
+look_back = 6
 y_range = 1
-y_forward = 12
-LSTM_l1_dimension = 128
+y_forward = 24
+LSTM_l1_dimension = 32
 LSTM_l2_dimension = 32
 LSTM_l3_dimension = 32
 LSTM_l4_dimension = 64
@@ -191,8 +191,8 @@ epochs = 30
 
 to_predict_feature = 'O3'
 
-predict_range = 168
-delta = 100
+
+delta = 0
 
 training_df = prepare_data()
 
@@ -200,11 +200,15 @@ training_df = prepare_data()
 
 X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
 
+
+predict_range = 2000
+
+
 # load the model:
 
 if model_type == 1:
 
-    model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
+    model = load_model(f'LSTM_Model/Models/{to_predict_feature}-Model(dim-{LSTM_l1_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras', compile = False)
 if model_type == 2:
     model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 if model_type == 3:
@@ -310,6 +314,68 @@ print(predicted_vals)
 
 
 
+# do bootstrapping to evaluate range of error metrics:
+# 24 hour samples are gonna be evaluated and then the values at 2.5% and 97.5% of the st disrtibution are gonna be taken
+
+
+
+def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 2000):
+    n = len(y_true)
+    n_blocks = int(np.ceil(n / block_size))
+
+    rmse_list = []
+    mae_list = []
+    corr_list = []
+
+    for i in range(reps):
+
+        sampled_indices = []
+
+        for l in range(n_blocks):
+            start = np.random.randint(0, n-block_size)
+
+            block_idx = list(range(start, start + block_size))
+
+            sampled_indices.extend(block_idx)
+        
+        sampled_indices = sampled_indices[:n]
+
+        y_t = y_true[sampled_indices]
+        y_p = y_pred[sampled_indices]
+
+        rmse = np.sqrt(mean_squared_error(y_t, y_p))
+        mae = mean_absolute_error(y_t, y_p)
+        corr = np.corrcoef(y_t, y_p)[0,1]
+
+        rmse_list.append(rmse)
+        mae_list.append(mae)
+        corr_list.append(corr)
+
+    rmse_arr = np.array(rmse_list)
+    mae_arr = np.array(mae_list)
+    corr_arr = np.array(corr_list)
+
+    results = {
+        "rmse_mean": rmse_arr.mean(),
+        "rmse_std": rmse_arr.std(),
+        "rmse_low": np.percentile(rmse_arr,2.5),
+        "rmse_high": np.percentile(rmse_arr,97.5),
+
+        "mae_mean": mae_arr.mean(),
+        "mae_std": mae_arr.std(),
+
+        "corr_mean": corr_arr.mean(),
+        "corr_std": corr_arr.std()
+    }
+
+    return results
+
+results = block_eval_surety_metrics(actual_vals,predicted_vals)
+
+print(results)
+
+
+""""
 
 
 
@@ -324,6 +390,7 @@ plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
 #x_vals = inverse_scale(np.array(x_vals[y_range+int(shift/y_range):y_range+int(shift/y_range) + predict_range]))
 
 #plt.plot(x_vals, label = 'x_vals', color = 'red')
+
 
 
 
@@ -381,7 +448,7 @@ if model_type == 4:
 
 
 plt.show()
-
+"""
 
 """"
 #für dunklen Background:

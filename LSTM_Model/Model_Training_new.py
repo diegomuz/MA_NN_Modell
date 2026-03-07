@@ -184,7 +184,7 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
     return X_tr, Y_tr, X_te, Y_te, X_val, Y_val 
 
 
-y_forward = 12
+y_forward = 24
 
 
 def run():
@@ -194,7 +194,7 @@ def run():
     model_type = 1
 
 
-    look_back = 12
+    look_back = 6
     y_range = 1
 
     LSTM_l1_dimension = 32
