@@ -201,7 +201,7 @@ training_df = prepare_data()
 X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
 
 
-predict_range = 2000
+predict_range = 3400
 
 
 # load the model:
@@ -319,7 +319,7 @@ print(predicted_vals)
 
 
 
-def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 2000):
+def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 4000):
     n = len(y_true)
     n_blocks = int(np.ceil(n / block_size))
 
