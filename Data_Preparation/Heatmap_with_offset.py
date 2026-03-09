@@ -10,6 +10,7 @@ https://blog.quantinsti.com/creating-heatmap-using-python-seaborn/
 
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 import pandas as pd
 import seaborn as sns
 import numpy as np
@@ -144,7 +145,7 @@ print(grouped_data)
 
 selected_rows = [36]
 selected_cols = [30,34,6,19, 18, 35,7,20,41, 37, 9, 22, 38, 10, 23, 40, 43, 31,42, 44, 45, 48,  47, 32, 39]
-
+selected_cols = [34,6,19, 18, 35,7,20]
 fin_data = {}
 
 for i in range(len(grouped_data)):
@@ -187,11 +188,21 @@ correlation_matrix = correlation_matrix.iloc[selected_cols, selected_rows]
 
 plt.figure(figsize=(10, 7))
 
+# Use a red-white-green colormap so -1 is red, 0 is white, and +1 is green
+cmap = LinearSegmentedColormap.from_list('red_white_green', ['red', 'white', 'green'])
 
-heatmap = sns.heatmap(correlation_matrix, vmin = -1, vmax = 1, annot = True, fmt=".2f", xticklabels = data.columns[selected_rows])
+heatmap = sns.heatmap(
+    correlation_matrix,
+    vmin=-1,
+    vmax=1,
+    cmap=cmap,
+    annot=True,
+    fmt=".2f",
+    xticklabels=data.columns[selected_rows],
+)
 
-plt.xticks(rotation = 20, fontsize = 8)
-plt.yticks(fontsize = 8)
+plt.xticks(rotation=20, fontsize=8)
+plt.yticks(fontsize=8)
 
 #heatmap.set_title('Correlation Heatmap', fontdict={'fontsize':12}, pad=12)
 
