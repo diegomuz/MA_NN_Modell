@@ -38,7 +38,7 @@ to_predict_feature = 'O3'
 
 num_of_feautures = 0
 
-
+""""
 model_configs = [
     {'Type':1,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
     {'Type':1,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
@@ -91,7 +91,7 @@ model_configs = [
       
 ]
 
-""""
+"""
 model_configs = [
     {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
     {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
@@ -145,7 +145,7 @@ model_configs = [
     {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32}
 ]
 
-"""
+
 
 
 year_list = [2020,2021,2022,2023,2024]
@@ -399,10 +399,10 @@ def run(model_type, look_back, y_range, y_forward, LSTM_l1_dimension,LSTM_l2_dim
 
 for model in model_configs:
     if model['Type'] == 1:
-        run(model['Type'],model['look_back'],1,model['y_forward'],model['LSTM_l1_dimension'],0,0, model['batchsize'], 30, model['to_predict_feature'], model['features'])
+        run(model['Type'],model['look_back'],1,model['y_forward'],model['LSTM_l1_dimension'],0,0, model['batchsize'], 50, model['to_predict_feature'], model['features'])
 
     if model['Type'] == 2:
-         run(model['Type'],model['look_back'],1,model['y_forward'],model['LSTM_l1_dimension'],model['LSTM_l2_dimension'],0, model['batchsize'], 30, model['to_predict_feature'], model['features'])
+         run(model['Type'],model['look_back'],1,model['y_forward'],model['LSTM_l1_dimension'],model['LSTM_l2_dimension'],0, model['batchsize'], 50, model['to_predict_feature'], model['features'])
 
     if model['Type'] == 3:
          run(model['Type'],model['look_back'],1, model['y_forward'],model['LSTM_l1_dimension'],model['LSTM_l2_dimension'],model['LSTM_l3_dimension'], model['batchsize'],50 , model['to_predict_feature'], model['features'])
