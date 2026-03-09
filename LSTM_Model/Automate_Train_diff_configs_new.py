@@ -93,56 +93,53 @@ model_configs = [
 
 """
 model_configs = [
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':6,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':6,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':12,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':12,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':12,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':12,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':12,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':12,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':24,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':24,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':24,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':24,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':24,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':24,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':36,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':36,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':36,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':36,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':32, 'LSTM_l2_dimension':32, 'LSTM_l3_dimension':32, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32},
 
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':6,'y_forward':24, 'features': features, 'batchsize':32},
 
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':12,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':12,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':12,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':6,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':24,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':24,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':24,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':12,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':12,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':12,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':36,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':36,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'LSTM_l3_dimension':64, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':24,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':24,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':24,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':6,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':36,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':36,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':64, 'LSTM_l2_dimension':64, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':12,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':12,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':12,'y_forward':24, 'features': features, 'batchsize':32},
 
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':24,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':24,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':24,'y_forward':24, 'features': features, 'batchsize':32},
 
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':6,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':6,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':6,'y_forward':24, 'features': features, 'batchsize':32},
-
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':12,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':12,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':12,'y_forward':24, 'features': features, 'batchsize':32},
-
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':24,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':24,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':24,'y_forward':24, 'features': features, 'batchsize':32},
-
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':36,'y_forward':1, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':36,'y_forward':12, 'features': features, 'batchsize':32},
-    {'Type':2,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32}
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':36,'y_forward':1, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':36,'y_forward':12, 'features': features, 'batchsize':32},
+    {'Type':3,'to_predict_feature':to_predict_feature, 'LSTM_l1_dimension':128, 'LSTM_l2_dimension':128, 'LSTM_l3_dimension':128, 'look_back':36,'y_forward':24, 'features': features, 'batchsize':32}
 ]
 
 
