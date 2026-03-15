@@ -1,4 +1,4 @@
-import argparse
+
 
 import tensorflow
 import tf_keras
@@ -207,7 +207,7 @@ training_df = prepare_data()
 X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
 
 
-predict_range = 3400
+predict_range = 72
 
 
 # load the model:
@@ -380,67 +380,73 @@ def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 4000):
 
     return results
 
-results = block_eval_surety_metrics(actual_vals,predicted_vals)
+lstm_bootstrap = block_eval_surety_metrics(actual_vals, predicted_vals)
 
-print(results)
-
-
+#print(results)
 
 
 
-plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
 
-#plt.plot(actual_vals,  color = 'red')
 
-plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
+plt.figure(figsize=(10,5))
+
+plt.plot(actual_vals, label='Echte Werte', color='green')
+plt.plot(predicted_vals, label='LSTM Vorhersage', color='blue')
 
 if use_baseline:
-    plt.plot(baseline_vals, label='Baseline (prev hour)', color='orange', linestyle='--')
-
-#x_vals = [x[0][0] for x in X_test]
-#x_vals = inverse_scale(np.array(x_vals[y_range+int(shift/y_range):y_range+int(shift/y_range) + predict_range]))
-
-#plt.plot(x_vals, label = 'x_vals', color = 'red')
+    plt.plot(baseline_vals, label='Baseline (Vorherige Stunde)', color='orange', linestyle='--')
+    baseline_bootstrap = block_eval_surety_metrics(actual_vals, baseline_vals)
 
 
-
-
+# ---- Metrics for LSTM ----
 rmse = np.sqrt(mean_squared_error(actual_vals,predicted_vals))
 mae = mean_absolute_error(actual_vals,predicted_vals)
 correlation = np.corrcoef(actual_vals,predicted_vals)[0,1]
 
-metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
+metrics_text = (
+    "LSTM Modell\n"
+    f"RMSE: {rmse:.2f}\n"
+    f"MAE: {mae:.2f}\n"
+    f"Korrelation: {correlation:.2f}"
+)
 
+# ---- Metrics for Baseline ----
 if use_baseline:
-    metrics_text += f"\n{baseline_metrics_text}"
+    baseline_rmse = np.sqrt(mean_squared_error(actual_vals, baseline_vals))
+    baseline_mae = mean_absolute_error(actual_vals, baseline_vals)
+    baseline_corr = np.corrcoef(actual_vals, baseline_vals)[0,1]
 
-print(metrics_text)
+    baseline_text = (
+        "\n\nBaseline (Vorherige Stunde)\n"
+        f"RMSE: {baseline_rmse:.2f}\n"
+        f"MAE: {baseline_mae:.2f}\n"
+        f"Korrelation: {baseline_corr:.2f}"
+    )
 
-# Add RMSE as a note to the top right of the plot
-
-
-plt.text(0.95, 0.95, metrics_text, 
-         transform=plt.gca().transAxes, 
-         fontsize=8, 
-         verticalalignment='top', 
-         horizontalalignment='right',
-         bbox=dict(boxstyle="round", facecolor="white", edgecolor="gray"))
-
+    metrics_text += baseline_text
 
 
-#plt.yticks(range(10,100,10))
-
+# ---- Metrics Box ----
+plt.text(
+    0.98, 0.75,
+    metrics_text,
+    transform=plt.gca().transAxes,
+    fontsize=9,
+    verticalalignment='top',
+    horizontalalignment='right',
+    bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor="gray", alpha=0.9)
+)
 
 plt.legend(loc="upper left")
 
-
 plt.title(f'{to_predict_feature} - Konzentration')
-
-plt.ylabel('Konzentration in µg/m3')
+plt.ylabel('Konzentration in µg/m³')
 plt.xlabel('Stunden')
 
+plt.tight_layout()
 
-""""
+
+
 
 if model_type == 1:
 
@@ -455,6 +461,19 @@ if model_type == 3:
 if model_type == 4:
     plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
-"""
+print('created graph')
 
 plt.show()
+
+print("LSTM Bootstrap Metrics:")
+print(f"RMSE: {lstm_bootstrap['rmse_mean']:.2f} ± {lstm_bootstrap['rmse_std']:.2f}")
+print(f"MAE: {lstm_bootstrap['mae_mean']:.2f} ± {lstm_bootstrap['mae_std']:.2f}")
+print(f"Corr: {lstm_bootstrap['corr_mean']:.2f} ± {lstm_bootstrap['corr_std']:.2f}")
+print(f"RMSE 95% CI: [{lstm_bootstrap['rmse_ci_low']:.2f}, {lstm_bootstrap['rmse_ci_high']:.2f}]")
+
+if use_baseline:
+    print("\nBaseline Bootstrap Metrics:")
+    print(f"RMSE: {baseline_bootstrap['rmse_mean']:.2f} ± {baseline_bootstrap['rmse_std']:.2f}")
+    print(f"MAE: {baseline_bootstrap['mae_mean']:.2f} ± {baseline_bootstrap['mae_std']:.2f}")
+    print(f"Corr: {baseline_bootstrap['corr_mean']:.2f} ± {baseline_bootstrap['corr_std']:.2f}")
+    print(f"RMSE 95% CI: [{baseline_bootstrap['rmse_ci_low']:.2f}, {baseline_bootstrap['rmse_ci_high']:.2f}]")
