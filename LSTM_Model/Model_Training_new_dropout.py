@@ -191,7 +191,7 @@ def run():
 
     # create Trraining and Test Datasets
 
-    model_type = 1
+    model_type = 3
 
 
     look_back = 12
@@ -217,7 +217,7 @@ def run():
 
     model = Sequential()
     if model_type == 1:
-        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False, dropout=dropout))    
+        model.add(LSTM(LSTM_l1_dimension, input_shape = (look_back, num_of_feautures), return_sequences=False, dropout=dropout)) 
 
 
     if model_type == 2:
