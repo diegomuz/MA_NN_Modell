@@ -1,3 +1,5 @@
+import argparse
+
 import tensorflow
 import tf_keras
 from tf_keras.models import load_model
@@ -15,11 +17,9 @@ from sklearn.metrics import mean_absolute_error
 
 
 
-
 year_list = [2020,2021,2022,2023]
 
 # define what Features should be used for the model training
-
 
 
 features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
@@ -27,7 +27,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-""""
+"""
 features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
        'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3',
        'T', 'Hr',  'StrGlo',  'WVv', 'WVs', 'Cont_T',
@@ -39,6 +39,7 @@ features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
 #features = ['Datum', 'O3']
 
 num_of_feautures = 0
+
 
 
 def prepare_data():
@@ -125,6 +126,7 @@ def split_scale_data(df,split_percentage):
 
     return train_data, test_data
 
+
 def create_training_data(df, split_percentage: list, to_predict_feature, timesteps, y_range):
     train_data, test_data = split_scale_data(df, split_percentage[0])
     
@@ -175,7 +177,8 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
 
     return X_tr, Y_tr, X_te, Y_te, X_val, Y_val
 
-model_type = 1
+
+model_type = 3
 
 
 look_back = 36
@@ -192,10 +195,13 @@ epochs = 30
 to_predict_feature = 'O3'
 
 
+
 delta = 0
 
-training_df = prepare_data()
+use_baseline = True
 
+
+training_df = prepare_data()
 
 
 X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
@@ -217,7 +223,6 @@ if model_type == 4:
     model = tf_keras.models.load_model(f'LSTM_Model/Models/{to_predict_feature}-Model_Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).keras')
 
 model.summary()
-
 
 
 
@@ -246,11 +251,9 @@ def inverse_scale(array):
     #print(df)
 
     actual_values = np.array(df[to_predict_feature])
-
     
 
     return(actual_values)
-
 
 
 
@@ -261,14 +264,13 @@ actual_vals = []
 # change the following code, so that it makes sense for y_range > 1
 
 
-
 shift = int((3 - look_back/12)*12) + delta
 
 for i in range(int(predict_range/y_range)):
     for item in Y_test[:predict_range + shift][(i*y_range)+int(shift/y_range)]:
         actual_vals.append(item)
 
-""""
+"""
 for sub_list in Y_test[:predict_range]:
     for item in sub_list:
         actual_vals.append(item)
@@ -290,11 +292,9 @@ actual_vals = inverse_scale(actual_vals)
 
 
 
-
 predicted_vals = []
 
 Model_prediction = model.predict(X_test[:predict_range+y_range+shift])
-
 
 
 
@@ -312,6 +312,20 @@ print(actual_vals)
 print(predicted_vals)
 
 
+baseline_vals = None
+baseline_metrics_text = ''
+if use_baseline:
+    # Baseline prediction: use previous hour ozone concentration from the last timestep of each input window.
+    # This produces a "naive" baseline that does not use the LSTM model.
+    o3_col_index = list(training_df.drop(['Datum'], axis=1).columns).index(to_predict_feature)
+
+    baseline_scaled = X_test[shift: shift + int(predict_range/y_range), -1, o3_col_index]
+    baseline_vals = inverse_scale(baseline_scaled)
+
+    baseline_rmse = np.sqrt(mean_squared_error(actual_vals, baseline_vals))
+    baseline_mae = mean_absolute_error(actual_vals, baseline_vals)
+    baseline_corr = np.corrcoef(actual_vals, baseline_vals)[0,1]
+    baseline_metrics_text = f"Baseline (prev hour): RMSE = {baseline_rmse:.2f}, MAE = {baseline_mae:.2f}, Corr = {baseline_corr:.2f}"
 
 
 # do bootstrapping to evaluate range of error metrics:
@@ -371,8 +385,6 @@ results = block_eval_surety_metrics(actual_vals,predicted_vals)
 print(results)
 
 
-""""
-
 
 
 
@@ -382,11 +394,13 @@ plt.plot(actual_vals, label = 'Echte Werte', color = 'green')
 
 plt.plot(predicted_vals, label = 'Vorhersagen', color = 'blue' )
 
+if use_baseline:
+    plt.plot(baseline_vals, label='Baseline (prev hour)', color='orange', linestyle='--')
+
 #x_vals = [x[0][0] for x in X_test]
 #x_vals = inverse_scale(np.array(x_vals[y_range+int(shift/y_range):y_range+int(shift/y_range) + predict_range]))
 
 #plt.plot(x_vals, label = 'x_vals', color = 'red')
-
 
 
 
@@ -397,10 +411,12 @@ correlation = np.corrcoef(actual_vals,predicted_vals)[0,1]
 
 metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
 
+if use_baseline:
+    metrics_text += f"\n{baseline_metrics_text}"
+
 print(metrics_text)
 
 # Add RMSE as a note to the top right of the plot
-
 
 
 plt.text(0.95, 0.95, metrics_text, 
@@ -412,9 +428,7 @@ plt.text(0.95, 0.95, metrics_text,
 
 
 
-
 #plt.yticks(range(10,100,10))
-
 
 
 plt.legend(loc="upper left")
@@ -426,7 +440,7 @@ plt.ylabel('Konzentration in µg/m3')
 plt.xlabel('Stunden')
 
 
-
+""""
 
 if model_type == 1:
 
@@ -441,58 +455,6 @@ if model_type == 3:
 if model_type == 4:
     plt.savefig(f'Graphics/{to_predict_feature}-Prediction_Fig-Type-{model_type}(dim1-{LSTM_l1_dimension}_dim2-{LSTM_l2_dimension}_dim3-{LSTM_l3_dimension}_dim4-{LSTM_l4_dimension}_range-{y_range}_forward-{y_forward}_batch-{batchsize}_lookback-{look_back}_features-{num_of_feautures}).pdf')
 
-
-
-plt.show()
 """
 
-""""
-#für dunklen Background:
-
-# Plot curves with high contrast colors
-plt.plot(actual_vals, label='Echte Werte', color='yellow')  # Bright green
-plt.plot(predicted_vals, label='Vorhersagen', color='cyan')  # Bright blue
-
-# Calculate metrics
-rmse = np.sqrt(mean_squared_error(actual_vals, predicted_vals))
-mae = mean_absolute_error(actual_vals, predicted_vals)
-correlation = np.corrcoef(actual_vals, predicted_vals)[0, 1]
-
-metrics_text = f"RMSE = {rmse:.2f}\nMAE = {mae:.2f}\nKorrelation = {correlation:.2f}"
-print(metrics_text)
-
-# Add metrics text box with dark background and white text
-plt.text(0.95, 0.95, metrics_text, 
-         transform=plt.gca().transAxes, 
-         fontsize=8, 
-         verticalalignment='top', 
-         horizontalalignment='right',
-         bbox=dict(boxstyle="round", facecolor="#222222", edgecolor="white"),
-         color='white')
-
-# Set dark mode styles
-ax = plt.gca()
-ax.set_facecolor('none')  # transparent plot area
-plt.gcf().patch.set_alpha(0)  # transparent figure background
-
-# Make all text and ticks white
-ax.tick_params(colors='white')
-ax.spines['bottom'].set_color('white')
-ax.spines['left'].set_color('white')
-ax.xaxis.label.set_color('white')
-ax.yaxis.label.set_color('white')
-ax.title.set_color('white')
-
-# Legend styling
-legend = plt.legend(loc="upper left", facecolor="#222222", edgecolor='white')
-for text in legend.get_texts():
-    text.set_color('white')
-
-# Labels and title
-plt.title(f'{to_predict_feature} - Konzentration')
-plt.ylabel('Konzentration in µg/m3')
-plt.xlabel('Stunden')
-
-# Save or show with transparent background
 plt.show()
-"""
