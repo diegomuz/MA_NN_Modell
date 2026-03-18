@@ -207,7 +207,7 @@ training_df = prepare_data()
 X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
 
 
-predict_range = 72
+predict_range = 168
 
 
 # load the model:
@@ -370,13 +370,17 @@ def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 4000):
     corr_arr = np.array(corr_list)
 
     results = {
-    "rmse": f"{rmse_arr.mean():.4f} ± {rmse_arr.std():.4f}",
-    "rmse_ci95": f"[{np.percentile(rmse_arr,2.5):.4f}, {np.percentile(rmse_arr,97.5):.4f}]",
+        "rmse_mean": rmse_arr.mean(),
+        "rmse_std": rmse_arr.std(),
+        "rmse_ci_low": np.percentile(rmse_arr, 2.5),
+        "rmse_ci_high": np.percentile(rmse_arr, 97.5),
 
-    "mae": f"{mae_arr.mean():.4f} ± {mae_arr.std():.4f}",
+        "mae_mean": mae_arr.mean(),
+        "mae_std": mae_arr.std(),
 
-    "corr": f"{corr_arr.mean():.4f} ± {corr_arr.std():.4f}"
-}
+        "corr_mean": corr_arr.mean(),
+        "corr_std": corr_arr.std()
+    }
 
     return results
 
