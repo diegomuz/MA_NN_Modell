@@ -56,7 +56,7 @@ features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
  #     'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
 
 """
-#features = ['Datum', 'O3']
+features = ['Datum', 'O3']
 
 num_of_feautures = 0
 
@@ -96,7 +96,7 @@ cos_m = [np.cos(2*np.pi*m/12) for m in month_of_year]
 
 # add embeddings to training_df:
 
-
+""""
 
 training_df['sin_h'] = sin_h
 training_df['cos_h'] = cos_h
@@ -104,7 +104,7 @@ training_df['sin_d'] = sin_d
 training_df['cos_d'] = cos_d
 training_df['sin_m'] = sin_m
 training_df['cos_m'] = cos_m
-
+"""
 
 print(training_df)
 
@@ -184,7 +184,7 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
     return X_tr, Y_tr, X_te, Y_te, X_val, Y_val 
 
 
-y_forward = 24
+y_forward = 12
 
 
 def run():
@@ -194,7 +194,7 @@ def run():
     model_type = 1
 
 
-    look_back = 6
+    look_back = 12
     y_range = 1
 
     LSTM_l1_dimension = 32

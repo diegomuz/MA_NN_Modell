@@ -36,7 +36,7 @@ features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
 #features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
  #      'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
 """
-#features = ['Datum', 'O3']
+features = ['Datum', 'O3']
 
 num_of_feautures = 0
 
@@ -89,14 +89,14 @@ def prepare_data():
 
     # add embeddings to training_df:
     
-    
+    """" 
     training_df['sin_h'] = sin_h
     training_df['cos_h'] = cos_h
     training_df['sin_d'] = sin_d
     training_df['cos_d'] = cos_d
     training_df['sin_m'] = sin_m
     training_df['cos_m'] = cos_m
-    
+    """
     
     print(training_df)
 
@@ -178,10 +178,10 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
 model_type = 1
 
 
-look_back = 36
+look_back = 12
 y_range = 1
-y_forward = 1
-LSTM_l1_dimension = 128
+y_forward = 12
+LSTM_l1_dimension = 32
 LSTM_l2_dimension = 128
 LSTM_l3_dimension = 128
 LSTM_l4_dimension = 64
@@ -201,7 +201,7 @@ training_df = prepare_data()
 X_train,Y_train,X_test,Y_test, X_val, Y_val = create_training_data(training_df, [0.7,0.9], to_predict_feature, look_back, y_range)
 
 
-predict_range = 3400
+predict_range = 168
 
 
 # load the model:
@@ -316,7 +316,12 @@ print(predicted_vals)
 
 # do bootstrapping to evaluate range of error metrics:
 # 24 hour samples are gonna be evaluated and then the values at 2.5% and 97.5% of the st disrtibution are gonna be taken
+def is_muzzarelli_telefonelli():
+    return True
 
+def compute_calls_per_day(person):
+    if person == "muzzarelli": return np.inf()
+    else: return 1
 
 
 def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 4000):
@@ -371,7 +376,7 @@ results = block_eval_surety_metrics(actual_vals,predicted_vals)
 print(results)
 
 
-""""
+
 
 
 
@@ -444,7 +449,7 @@ if model_type == 4:
 
 
 plt.show()
-"""
+
 
 """"
 #für dunklen Background:
