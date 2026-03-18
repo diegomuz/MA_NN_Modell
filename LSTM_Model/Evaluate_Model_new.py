@@ -27,14 +27,14 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
         'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
         'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-
+""""
 features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
        'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3',
        'T', 'Hr',  'StrGlo',  'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_WVv', 'Cont_WVs']
-
-features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
-       'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
+"""
+#features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
+ #      'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
 
 #features = ['Datum', 'O3']
 
@@ -192,7 +192,7 @@ epochs = 30
 to_predict_feature = 'O3'
 
 
-delta = 0
+delta = 500
 
 training_df = prepare_data()
 
