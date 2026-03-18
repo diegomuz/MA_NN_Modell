@@ -9,7 +9,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
 #features = ['Datum','O3']
 
 num_of_feautures = 35
-model_type = 1
+model_type = 3
 
 look_back = 12
 y_range = 1
