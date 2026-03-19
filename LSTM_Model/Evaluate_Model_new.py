@@ -175,7 +175,7 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
 
     return X_tr, Y_tr, X_te, Y_te, X_val, Y_val
 
-model_type = 3
+model_type = 1
 
 
 look_back = 12
@@ -192,7 +192,7 @@ epochs = 30
 to_predict_feature = 'O3'
 
 
-delta = 500
+delta = 1000
 
 training_df = prepare_data()
 
