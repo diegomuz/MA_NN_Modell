@@ -181,7 +181,7 @@ model_type = 1
 look_back = 12
 y_range = 1
 y_forward = 12
-LSTM_l1_dimension = 128
+LSTM_l1_dimension = 64
 LSTM_l2_dimension = 32
 LSTM_l3_dimension = 32
 LSTM_l4_dimension = 64
@@ -192,7 +192,7 @@ epochs = 30
 to_predict_feature = 'O3'
 
 
-delta = 500
+delta = 1200
 
 training_df = prepare_data()
 

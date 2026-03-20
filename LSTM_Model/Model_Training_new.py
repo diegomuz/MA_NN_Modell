@@ -46,7 +46,7 @@ features = ['Datum', 'CO', 'SO2', 'NOx', 'NO', 'NO2', 'O3', 'PM10', 'PM2.5',
        'T', 'Hr', 'p', 'RainDur', 'StrGlo', 'WD', 'WVv', 'WVs', 'Cont_T',
        'Cont_Hr', 'Cont_p', 'Cont_RainDur', 'Cont_WD', 'Cont_WVv', 'Cont_WVs']
 
-
+""""
 features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
        'Cont_NOx', 'Cont_NO', 'Cont_NO2', 'Cont_O3',
        'T', 'Hr',  'StrGlo',  'WVv', 'WVs', 'Cont_T',
@@ -55,7 +55,7 @@ features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
 features = ['Datum', 'CO', 'NOx', 'NO', 'NO2', 'O3',
       'T', 'Hr',  'StrGlo',  'WVv', 'WVs']
 
-
+"""
 #features = ['Datum', 'O3']
 
 num_of_feautures = 0
@@ -197,7 +197,7 @@ def run():
     look_back = 12
     y_range = 1
 
-    LSTM_l1_dimension = 32
+    LSTM_l1_dimension = 64
     LSTM_l2_dimension = 32
     LSTM_l3_dimension = 32
     LSTM_l4_dimension = 32
