@@ -181,7 +181,7 @@ def create_training_data(df, split_percentage: list, to_predict_feature, timeste
 model_type = 1
 
 
-look_back = 36
+look_back = 12
 y_range = 1
 y_forward = 1
 LSTM_l1_dimension = 32
@@ -196,7 +196,7 @@ to_predict_feature = 'O3'
 
 
 
-delta = 0
+delta = 700
 
 use_baseline = True
 

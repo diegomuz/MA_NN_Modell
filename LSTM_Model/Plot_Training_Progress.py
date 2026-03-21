@@ -41,7 +41,7 @@ if model_type == 3:
 
 plt.figure(figsize=(8,6))
 plt.plot(loaded_history['loss'], label='Training MSE')
-plt.plot(loaded_history['val_loss'], label='Test MSE')
+plt.plot(loaded_history['val_loss'], label='Validation MSE')
 plt.xticks(range(0,len(loaded_history['loss']),2))
 plt.title(f'MSE-Entwicklung des {to_predict_feature}-Modells')
 plt.xlabel('Anzahl Epochen')
