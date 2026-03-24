@@ -192,7 +192,7 @@ epochs = 30
 to_predict_feature = 'O3'
 
 
-delta = 500
+delta = 1200
 
 training_df = prepare_data()
 

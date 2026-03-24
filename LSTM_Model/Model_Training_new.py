@@ -197,7 +197,7 @@ def run():
     look_back = 12
     y_range = 1
 
-    LSTM_l1_dimension = 64
+    LSTM_l1_dimension = 32
     LSTM_l2_dimension = 32
     LSTM_l3_dimension = 32
     LSTM_l4_dimension = 32
