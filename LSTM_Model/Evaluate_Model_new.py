@@ -16,7 +16,7 @@ from sklearn.metrics import mean_absolute_error
 
 
 
-year_list = [2020,2021,2022,2023]
+year_list = [2020,2021,2022,2023,2024]
 
 # define what Features should be used for the model training
 
@@ -316,12 +316,7 @@ print(predicted_vals)
 
 # do bootstrapping to evaluate range of error metrics:
 # 24 hour samples are gonna be evaluated and then the values at 2.5% and 97.5% of the st disrtibution are gonna be taken
-def is_muzzarelli_telefonelli():
-    return True
 
-def compute_calls_per_day(person):
-    if person == "muzzarelli": return np.inf()
-    else: return 1
 
 
 def block_eval_surety_metrics(y_true, y_pred, block_size = 24, reps = 4000):
